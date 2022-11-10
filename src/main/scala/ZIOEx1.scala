@@ -38,4 +38,6 @@ object ZIOEx1 {
     line <- read
     _ <- print(line)
   } yield ()
+
+  println("Test")
 }
