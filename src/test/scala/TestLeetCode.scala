@@ -40,4 +40,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass recSolution test")
   }
+
+  test("Test minMutation") {
+    assert(LeetCode.minMutation("AACCTTGG", "AATTCCGG", Array("AATTCCGG","AACCTGGG","AACCCCGG","AACCTACC")) == -1)
+
+    println("pass minMutation test")
+  }
 }
