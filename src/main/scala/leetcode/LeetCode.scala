@@ -572,21 +572,14 @@ object LeetCode extends App {
   }
 
   def removeDuplicates(nums: Array[Int]): Int = {
-    nums.foldLeft((0, 0)){ (pair, nextNum) =>
-      val (index, uniqNums) = pair
-
-      if (uniqNums == 0 && index == 0) {
-        (0, 1)
+    nums.drop(1).foldLeft(1){ (uniq, nextNum) =>
+      if (nums(uniq - 1) == nextNum) {
+        uniq
       }
       else {
-        if (nums(index) == nextNum) {
-          (index, uniqNums)
-        }
-        else {
-          nums(index + 1) = nextNum
-          (index + 1, uniqNums + 1)
-        }
+        nums(uniq) = nextNum
+        uniq + 1
       }
-    }._2
+    }
   }
 }
