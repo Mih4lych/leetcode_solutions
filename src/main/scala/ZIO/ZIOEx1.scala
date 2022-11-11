@@ -1,3 +1,5 @@
+package ZIO
+
 import scala.io.StdIn
 
 object ZIOEx1 {

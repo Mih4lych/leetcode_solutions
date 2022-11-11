@@ -1,3 +1,5 @@
+package leetcode
+
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestLeetCode extends AnyFunSuite {

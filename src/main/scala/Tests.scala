@@ -37,7 +37,9 @@ object Tests extends App{
     loop()
   }
 
-  val testThread = new Thread {() => println("hello")}
+  val testThread = new Thread { () =>
+    println("hello")
+  }
 
   println(0 % 1)
 }
