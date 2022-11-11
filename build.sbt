@@ -11,3 +11,6 @@ libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.7",
   "org.scalatest" %% "scalatest" % "3.2.7" % "test"
 )
+libraryDependencies += "dev.zio" %% "zio"         % "2.0.0"
+libraryDependencies += "dev.zio" %% "zio-streams" % "2.0.0"
+libraryDependencies += "dev.zio" %% "zio-test"    % "2.0.0"
