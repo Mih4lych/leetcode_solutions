@@ -46,4 +46,12 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass minMutation test")
   }
+
+  test("Test removeDuplicates") {
+    val testArray = Array(1,1,2)
+    assert(LeetCode.removeDuplicates(testArray) == 2)
+    assert(testArray.sameElements(Array(1, 2, 2)))
+
+    println("pass removeDuplicates test")
+  }
 }

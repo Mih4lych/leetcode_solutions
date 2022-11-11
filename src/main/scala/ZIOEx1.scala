@@ -18,15 +18,13 @@ object ZIOEx1 {
    *      3. read something from the console
    *      4. print something to the console (e.g. "what's your name"), then read, then print a welcome message
    */
-  def getCurTime(): MyIO[Long] = {
-    MyIO(() => System.currentTimeMillis())
-  }
+  val currentTime: MyIO[Long] = MyIO(() => System.currentTimeMillis())
 
   def measure[A](computation: MyIO[A]): MyIO[(Long, A)] = for {
-    begin <- getCurTime()
+    startTime <- currentTime
     result <- computation
-    end <- getCurTime()
-  } yield MyIO(() => (end - begin, result))
+    endTime <- currentTime
+  } yield (endTime - startTime, result)
 
   def read: MyIO[String] = {
     MyIO(() => StdIn.readLine())

@@ -318,4 +318,23 @@ object LeetCode extends App{
       }
     }.reverse.mkString
   }
+
+  def removeDuplicates(nums: Array[Int]): Int = {
+    nums.foldLeft((0, 0)){ (pair, nextNum) =>
+      val (index, uniqNums) = pair
+
+      if (uniqNums == 0 && index == 0) {
+        (0, 1)
+      }
+      else {
+        if (nums(index) == nextNum) {
+          (index, uniqNums)
+        }
+        else {
+          nums(index + 1) = nextNum
+          (index + 1, uniqNums + 1)
+        }
+      }
+    }._2
+  }
 }
