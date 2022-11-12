@@ -2,7 +2,7 @@ package leetcode
 
 import scala.annotation.tailrec
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.util.Try
 
 object LeetCode extends App {
@@ -582,4 +582,32 @@ object LeetCode extends App {
       }
     }
   }
+
+  class MedianFinder() {
+    private val minPrio = mutable.PriorityQueue[Int]()(Ordering.by(x => x))
+    private val maxPrio = mutable.PriorityQueue[Int]()(Ordering.by(x => -x))
+    def addNum(num: Int): Unit = {
+      if (num < minPrio.headOption.getOrElse(Int.MaxValue)) {
+        minPrio.enqueue(num)
+      }
+      else {
+        maxPrio.enqueue(num)
+      }
+      minPrio.size - maxPrio.size match {
+        case 2 => maxPrio.enqueue(minPrio.dequeue())
+        case -2 => minPrio.enqueue(maxPrio.dequeue())
+        case _ =>
+      }
+      }
+
+      def findMedian(): Double = {
+        val minSize = minPrio.size
+        val maxSize = maxPrio.size
+
+        if (minSize == maxSize) (minPrio.head + maxPrio.head).toDouble / 2
+        else if (minSize > maxSize) minPrio.head
+        else maxPrio.head
+      }
+  }
+  //[[6],[],[10],[],[2],[],[6],[],[5],[],[0],[],[6],[],[3],[],[1],[],[0],[],[0],[]]
 }
