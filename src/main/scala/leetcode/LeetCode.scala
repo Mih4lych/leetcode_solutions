@@ -610,4 +610,18 @@ object LeetCode extends App {
       }
   }
   //[[6],[],[10],[],[2],[],[6],[],[5],[],[0],[],[6],[],[3],[],[1],[],[0],[],[0],[]]
+
+  def reverseWords(s: String): String = {
+    s.trim.split(" ").filter(_.nonEmpty).reverse.mkString(" ")
+  }
+  def reverseWords_v2(s: String): String = {
+    s.trim.split(" ").foldLeft(List.empty[String]) {(acc, str) =>
+      if (str.nonEmpty) {
+        str :: acc
+      }
+      else {
+        acc
+      }
+    }.mkString(" ")
+  }
 }
