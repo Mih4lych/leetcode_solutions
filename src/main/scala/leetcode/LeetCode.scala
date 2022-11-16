@@ -629,21 +629,21 @@ object LeetCode extends App {
     def removeStonesRec(stack: List[Array[Int]] = List.empty
                         , visited: Set[Array[Int]] = Set.empty
                         , curIndex: Int = 0
-                        , count: Int = 0): Int = {
+                        , groupCount: Int = 0): Int = {
       if (stack.isEmpty) {
-        if (curIndex == stones.length) count
-        else if (visited(stones(curIndex))) removeStonesRec(stack, visited, curIndex + 1, count)
-        else removeStonesRec(stones(curIndex) :: stack, visited, curIndex + 1, count)
+        if (curIndex == stones.length) stones.length - groupCount
+        else if (visited(stones(curIndex))) removeStonesRec(stack, visited, curIndex + 1, groupCount)
+        else removeStonesRec(stones(curIndex) :: stack, visited, curIndex + 1, groupCount + 1)
       }
       else {
         val head = stack.head
         val newSet = visited + head
         val toAdd = stones.filter(pair => !newSet(pair) && (pair(0) == head(0) || pair(1) == head(1))).toList
         if (toAdd.nonEmpty) {
-          removeStonesRec(toAdd ::: stack.tail, newSet, curIndex, count + 1)
+          removeStonesRec(toAdd ::: stack.tail, newSet, curIndex, groupCount)
         }
         else {
-          removeStonesRec(stack.tail, newSet, curIndex, count)
+          removeStonesRec(stack.tail, newSet, curIndex, groupCount)
         }
       }
     }
@@ -667,7 +667,7 @@ object LeetCode extends App {
     counter()
   }
 
-  def guess(i: Int)= ???
+  def guess(i: Int): Int= 6 - i
   def guessNumber(n: Int): Int = {
     def guessRec(from: Int = 1, to: Int = n): Int = {
       val middle = from + (to - from) / 2

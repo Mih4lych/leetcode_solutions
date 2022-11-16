@@ -67,5 +67,8 @@ object ZIOTests extends ZIOAppDefault {
 
   val cancelBeforeMol = ZIO.interrupt *> ZIO.succeed(42).debugThread
   val uncancelBeforeMol = ZIO.uninterruptible(ZIO.interrupt *> ZIO.succeed(42).debugThread)
-  def run = uncancelBeforeMol
+
+  val testAs = ZIO.succeed(println(10)).as(11)
+
+  def run = testAs.map(println)
 }
