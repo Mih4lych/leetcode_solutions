@@ -624,4 +624,61 @@ object LeetCode extends App {
       }
     }.mkString(" ")
   }
+
+  def removeStones(stones: Array[Array[Int]]): Int = {
+    def removeStonesRec(stack: List[Array[Int]] = List.empty
+                        , visited: Set[Array[Int]] = Set.empty
+                        , curIndex: Int = 0
+                        , count: Int = 0): Int = {
+      if (stack.isEmpty) {
+        if (curIndex == stones.length) count
+        else if (visited(stones(curIndex))) removeStonesRec(stack, visited, curIndex + 1, count)
+        else removeStonesRec(stones(curIndex) :: stack, visited, curIndex + 1, count)
+      }
+      else {
+        val head = stack.head
+        val newSet = visited + head
+        val toAdd = stones.filter(pair => !newSet(pair) && (pair(0) == head(0) || pair(1) == head(1))).toList
+        if (toAdd.nonEmpty) {
+          removeStonesRec(toAdd ::: stack.tail, newSet, curIndex, count + 1)
+        }
+        else {
+          removeStonesRec(stack.tail, newSet, curIndex, count)
+        }
+      }
+    }
+
+    removeStonesRec()
+  }
+
+  case class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
+    var value: Int = _value
+    var left: TreeNode = _left
+    var right: TreeNode = _right
+  }
+  def countNodes(root: TreeNode): Int = {
+    def counter(node: TreeNode = root): Int = {
+      if (node == null) 0
+      else {
+        1 + counter(node.left) + counter(node.right)
+      }
+    }
+
+    counter()
+  }
+
+  def guess(i: Int)= ???
+  def guessNumber(n: Int): Int = {
+    def guessRec(from: Int = 1, to: Int = n): Int = {
+      val middle = from + (to - from) / 2
+
+      guess(middle) match {
+        case 0 => middle
+        case -1 => guessRec(from, middle)
+        case 1 => guessRec(middle + 1, to)
+      }
+    }
+
+    guessRec()
+  }
 }

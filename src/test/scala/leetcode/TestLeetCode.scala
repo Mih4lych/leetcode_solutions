@@ -56,4 +56,28 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass removeDuplicates test")
   }
+
+  test("Test removeStones") {
+    assert(LeetCode.removeStones(Array(Array(0,0), Array(0,1), Array(1,0), Array(1,2), Array(2,1), Array(2, 2))) == 5)
+    assert(LeetCode.removeStones(Array(Array(0,0))) == 0)
+
+    println("pass removeStones test")
+  }
+
+  test("Test countNodes") {
+    val root = LeetCode.TreeNode(1)
+    root.left = LeetCode.TreeNode(2)
+    root.right = LeetCode.TreeNode(3)
+
+    val rootLeft = root.left
+    rootLeft.left = LeetCode.TreeNode(4)
+    rootLeft.right = LeetCode.TreeNode(5)
+
+    val rootRight = root.right
+    rootRight.left = LeetCode.TreeNode(6)
+
+    assert(LeetCode.countNodes(root) == 6)
+
+    println("pass countNodes test")
+  }
 }
