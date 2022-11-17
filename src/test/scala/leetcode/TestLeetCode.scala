@@ -80,4 +80,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass countNodes test")
   }
+
+  test("Test computeArea") {
+    assert(LeetCode.computeArea(ax1 = -3, ay1 = 0, ax2 = 3, ay2 = 4, bx1 = 0, by1 = -1, bx2 = 9, by2 = 2) == 45)
+
+    println("pass computeArea test")
+  }
 }

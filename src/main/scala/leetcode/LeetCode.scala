@@ -681,4 +681,14 @@ object LeetCode extends App {
 
     guessRec()
   }
+
+  def computeArea(ax1: Int, ay1: Int, ax2: Int, ay2: Int, bx1: Int, by1: Int, bx2: Int, by2: Int): Int = {
+    val (newX1, newY1) =
+      (ax1.max(bx1), ay1.max(by1))
+
+    val (newX2, newY2) =
+      (ax2.min(bx2), ay2.min(by2))
+
+    (ay2 - ay1) * (ax2 - ax1) + (by2 - by1) * (bx2 - bx1) - (if (newX2 - newX1 > 0 && newY2 - newY1 > 0) (newY2 - newY1) * (newX2 - newX1) else 0)
+  }
 }
