@@ -86,4 +86,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass computeArea test")
   }
+
+  test("Test isUgly") {
+    assert(!LeetCode.isUgly(-2147483648))
+
+    println("pass isUgly test")
+  }
 }

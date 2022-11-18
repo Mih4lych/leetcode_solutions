@@ -691,4 +691,22 @@ object LeetCode extends App {
 
     (ay2 - ay1) * (ax2 - ax1) + (by2 - by1) * (bx2 - bx1) - (if (newX2 - newX1 > 0 && newY2 - newY1 > 0) (newY2 - newY1) * (newX2 - newX1) else 0)
   }
+
+  def isUgly(n: Int): Boolean = {
+    if (n <= 0) false
+    else {
+      def divide(prime: Int, curN: Int): Int = {
+        if (curN % prime == 0) {
+          divide(prime, curN / prime)
+        }
+        else {
+          curN
+        }
+      }
+
+      List(2, 3, 5).foldLeft(n) { (acc, prime) =>
+        divide(prime, acc)
+      } == 1
+    }
+  }
 }
