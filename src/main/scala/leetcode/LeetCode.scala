@@ -709,4 +709,21 @@ object LeetCode extends App {
       } == 1
     }
   }
+
+  def search(nums: Array[Int], target: Int): Int = {
+    def searchRec(from: Int = 0, to: Int = nums.length - 1): Int = {
+      if (from > to) -1
+      else {
+        val middle = from + (to - from) / 2
+
+        target - nums(middle) match {
+          case 0 => middle
+          case x if x < 0 => searchRec(from, middle - 1)
+          case x if x > 0 => searchRec(middle + 1, to)
+        }
+      }
+    }
+
+    searchRec()
+  }
 }

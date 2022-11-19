@@ -92,4 +92,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass isUgly test")
   }
+
+  test("Test search") {
+    assert(LeetCode.search(Array(-1,0,3,5,9,12), 2) == -1)
+
+    println("pass search test")
+  }
 }
