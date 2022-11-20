@@ -98,4 +98,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass search test")
   }
+
+  test("Test searchInsertByHands") {
+    assert(LeetCode.searchInsertByHands(Array(1,3), 2) == 1)
+
+    println("pass searchInsertByHands test")
+  }
 }

@@ -1,6 +1,7 @@
 package leetcode
 
 import scala.annotation.tailrec
+import scala.collection.Searching.{Found, InsertionPoint}
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.util.Try
@@ -720,6 +721,52 @@ object LeetCode extends App {
           case 0 => middle
           case x if x < 0 => searchRec(from, middle - 1)
           case x if x > 0 => searchRec(middle + 1, to)
+        }
+      }
+    }
+
+    searchRec()
+  }
+
+  def isBadVersion(version: Int): Boolean = ???
+  def firstBadVersion(n: Int): Int = {
+    def searchRec(from: Int = 1, to: Int = n, lastTrueIndex: Int = -1): Int = {
+      if (from > to) lastTrueIndex
+      else {
+        val middle = from + (to - from) / 2
+
+        if (isBadVersion(middle)) {
+          searchRec(from, middle - 1, middle)
+        } else {
+          searchRec(middle + 1, to, lastTrueIndex)
+        }
+      }
+    }
+
+    searchRec()
+  }
+
+  def searchInsert(nums: Array[Int], target: Int): Int = {
+    nums.search(target) match {
+      case InsertionPoint(insertionPoint) => insertionPoint
+      case Found(foundIndex) => foundIndex
+    }
+  }
+
+  def searchInsertByHands(nums: Array[Int], target: Int): Int = {
+    def searchRec(from: Int = 0, to: Int = nums.length - 1, lastCheckedIndex: Int = -1): Int = {
+      if (from > to) {
+        (lastCheckedIndex +
+          (if (target - nums(lastCheckedIndex) > 0) -1
+          else 1)).max(0)
+      }
+      else {
+        val middle = from + (to - from) / 2
+
+        target - nums(middle) match {
+          case 0 => middle
+          case x if x < 0 => searchRec(from, middle - 1, middle)
+          case x if x > 0 => searchRec(middle + 1, to, middle)
         }
       }
     }
