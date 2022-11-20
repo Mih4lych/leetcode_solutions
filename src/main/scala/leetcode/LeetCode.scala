@@ -773,4 +773,15 @@ object LeetCode extends App {
 
     searchRec()
   }
+
+  def sortedSquares(nums: Array[Int]): Array[Int] = {
+    nums.map(Math.pow(_, 2).toInt).sorted
+  }
+
+  def rotate(nums: Array[Int], k: Int): Unit = {
+    val split = nums.splitAt(nums.length - k)
+    val result = split._2 ++ split._1
+
+    nums.indices.foreach(i => nums(i) = result(i))
+  }
 }
