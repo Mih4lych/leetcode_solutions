@@ -842,18 +842,17 @@ object LeetCode extends App {
   }
 
   def moveZeroes(nums: Array[Int]): Unit = {
-    val zeros = nums.indices.foldLeft(0) { (acc, index) =>
+    nums.indices.foldLeft(0) { (acc, index) =>
       if (nums(index) == 0) {
         acc + 1
       }
       else {
         if (acc != 0) {
           nums(index - acc) = nums(index)
+          nums(index) = 0
         }
         acc
       }
     }
-
-    (nums.length - zeros until nums.length).foreach(nums(_) = 0)
   }
 }
