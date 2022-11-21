@@ -106,9 +106,9 @@ class TestLeetCode extends AnyFunSuite {
   }
 
   test("Test nearestExit") {
-    /*assert(LeetCode.nearestExit(Array(Array('+','+','.','+'), Array('.','.','.','+'), Array('+','+','+','.')), Array(1,2)) == 1)
+    assert(LeetCode.nearestExit(Array(Array('+','+','.','+'), Array('.','.','.','+'), Array('+','+','+','.')), Array(1,2)) == 1)
     assert(LeetCode.nearestExit(Array(Array('+','+','+'), Array('.','.','.'), Array('+','+','+')), Array(1,0)) == 2)
-    assert(LeetCode.nearestExit(Array(Array('.','+')), Array(0,0)) == -1)*/
+    assert(LeetCode.nearestExit(Array(Array('.','+')), Array(0,0)) == -1)
     assert(LeetCode.nearestExit(Array(
       Array('+','.','+','+','+','+','+'),
       Array('+','.','+','.','.','.','+'),
@@ -118,5 +118,11 @@ class TestLeetCode extends AnyFunSuite {
     ), Array(0,1)) == 12)
 
     println("pass nearestExit test")
+  }
+
+  test("Test twoSum") {
+    assert(LeetCode.twoSum(Array(5,25,75), 100) == Array(2,3))
+
+    println("pass twoSum test")
   }
 }

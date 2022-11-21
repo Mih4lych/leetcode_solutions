@@ -817,4 +817,43 @@ object LeetCode extends App {
 
     nearestExitRec()
   }
+
+  def twoSum(numbers: Array[Int], target: Int): Array[Int] = {
+    def twoSumRec(left: Int = 0, right: Int = numbers.length - 1): Array[Int] = {
+      if (left == numbers.length - 1) Array.empty
+      else {
+        if (left == right) {
+          LazyList.range(left + 1, numbers.length, 1).find(newLeft => numbers(newLeft) != numbers(left)) match {
+            case Some(l) => twoSumRec(l)
+            case None => Array.empty
+          }
+        }
+        else if (numbers(left) + numbers(right) == target) Array(left + 1, right + 1)
+        else {
+          LazyList.range(right - 1, left, -1).find(newRight => numbers(right) != numbers(newRight)) match {
+            case Some(r) => twoSumRec(left, r)
+            case _ => twoSumRec(left, left)
+          }
+        }
+      }
+    }
+
+    twoSumRec()
+  }
+
+  def moveZeroes(nums: Array[Int]): Unit = {
+    val zeros = nums.indices.foldLeft(0) { (acc, index) =>
+      if (nums(index) == 0) {
+        acc + 1
+      }
+      else {
+        if (acc != 0) {
+          nums(index - acc) = nums(index)
+        }
+        acc
+      }
+    }
+
+    (nums.length - zeros until nums.length).foreach(nums(_) = 0)
+  }
 }
