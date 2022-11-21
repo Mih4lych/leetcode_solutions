@@ -104,4 +104,19 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass searchInsertByHands test")
   }
+
+  test("Test nearestExit") {
+    /*assert(LeetCode.nearestExit(Array(Array('+','+','.','+'), Array('.','.','.','+'), Array('+','+','+','.')), Array(1,2)) == 1)
+    assert(LeetCode.nearestExit(Array(Array('+','+','+'), Array('.','.','.'), Array('+','+','+')), Array(1,0)) == 2)
+    assert(LeetCode.nearestExit(Array(Array('.','+')), Array(0,0)) == -1)*/
+    assert(LeetCode.nearestExit(Array(
+      Array('+','.','+','+','+','+','+'),
+      Array('+','.','+','.','.','.','+'),
+      Array('+','.','+','.','+','.','+'),
+      Array('+','.','.','.','+','.','+'),
+      Array('+','+','+','+','+','.','+')
+    ), Array(0,1)) == 12)
+
+    println("pass nearestExit test")
+  }
 }

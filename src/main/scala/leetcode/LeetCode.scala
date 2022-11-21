@@ -784,4 +784,37 @@ object LeetCode extends App {
 
     nums.indices.foreach(i => nums(i) = result(i))
   }
+
+  def nearestExit(maze: Array[Array[Char]], entrance: Array[Int]): Int = {
+    val width = maze(0).length
+    val high = maze.length
+    val moves = Array(Array(1, 0), Array(-1, 0), Array(0, 1), Array(0, -1))
+
+    def nearestExitRec(curQueue: mutable.Queue[Array[Int]] = mutable.Queue(Array(entrance(0), entrance(1), 0))): Int = {
+      if (curQueue.isEmpty) -1
+      else {
+        val curPos = curQueue.dequeue()
+
+        if (curPos(2) != 0 && (curPos(0) == 0 || curPos(0) == high - 1 || curPos(1) == 0 || curPos(1) == width - 1)) curPos(2)
+        else {
+          curQueue.enqueueAll(
+            moves
+              .withFilter(move =>
+                (move(0) + curPos(0)) < high &&
+                (move(0) + curPos(0)) >= 0 &&
+                (move(1) + curPos(1)) < width &&
+                (move(1) + curPos(1)) >= 0 &&
+                maze(move(0) + curPos(0))(move(1) + curPos(1)) == '.')
+              .map(move => Array(move(0) + curPos(0), move(1) + curPos(1), curPos(2) + 1))
+          )
+
+          maze(curPos(0))(curPos(1)) = '+'
+
+          nearestExitRec(curQueue)
+        }
+      }
+    }
+
+    nearestExitRec()
+  }
 }
