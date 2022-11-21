@@ -1,6 +1,7 @@
 package leetcode
 
 import scala.annotation.tailrec
+import scala.collection.Searching.{Found, InsertionPoint}
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.util.Try
@@ -707,6 +708,151 @@ object LeetCode extends App {
       List(2, 3, 5).foldLeft(n) { (acc, prime) =>
         divide(prime, acc)
       } == 1
+    }
+  }
+
+  def search(nums: Array[Int], target: Int): Int = {
+    def searchRec(from: Int = 0, to: Int = nums.length - 1): Int = {
+      if (from > to) -1
+      else {
+        val middle = from + (to - from) / 2
+
+        target - nums(middle) match {
+          case 0 => middle
+          case x if x < 0 => searchRec(from, middle - 1)
+          case x if x > 0 => searchRec(middle + 1, to)
+        }
+      }
+    }
+
+    searchRec()
+  }
+
+  def isBadVersion(version: Int): Boolean = ???
+  def firstBadVersion(n: Int): Int = {
+    def searchRec(from: Int = 1, to: Int = n, lastTrueIndex: Int = -1): Int = {
+      if (from > to) lastTrueIndex
+      else {
+        val middle = from + (to - from) / 2
+
+        if (isBadVersion(middle)) {
+          searchRec(from, middle - 1, middle)
+        } else {
+          searchRec(middle + 1, to, lastTrueIndex)
+        }
+      }
+    }
+
+    searchRec()
+  }
+
+  def searchInsert(nums: Array[Int], target: Int): Int = {
+    nums.search(target) match {
+      case InsertionPoint(insertionPoint) => insertionPoint
+      case Found(foundIndex) => foundIndex
+    }
+  }
+
+  def searchInsertByHands(nums: Array[Int], target: Int): Int = {
+    def searchRec(from: Int = 0, to: Int = nums.length - 1, lastCheckedIndex: Int = -1): Int = {
+      if (from > to) {
+        (lastCheckedIndex +
+          (if (target - nums(lastCheckedIndex) > 0) -1
+          else 1)).max(0)
+      }
+      else {
+        val middle = from + (to - from) / 2
+
+        target - nums(middle) match {
+          case 0 => middle
+          case x if x < 0 => searchRec(from, middle - 1, middle)
+          case x if x > 0 => searchRec(middle + 1, to, middle)
+        }
+      }
+    }
+
+    searchRec()
+  }
+
+  def sortedSquares(nums: Array[Int]): Array[Int] = {
+    nums.map(Math.pow(_, 2).toInt).sorted
+  }
+
+  def rotate(nums: Array[Int], k: Int): Unit = {
+    val split = nums.splitAt(nums.length - k)
+    val result = split._2 ++ split._1
+
+    nums.indices.foreach(i => nums(i) = result(i))
+  }
+
+  def nearestExit(maze: Array[Array[Char]], entrance: Array[Int]): Int = {
+    val width = maze(0).length
+    val high = maze.length
+    val moves = Array(Array(1, 0), Array(-1, 0), Array(0, 1), Array(0, -1))
+
+    def nearestExitRec(curQueue: mutable.Queue[Array[Int]] = mutable.Queue(Array(entrance(0), entrance(1), 0))): Int = {
+      if (curQueue.isEmpty) -1
+      else {
+        val curPos = curQueue.dequeue()
+
+        if (curPos(2) != 0 && (curPos(0) == 0 || curPos(0) == high - 1 || curPos(1) == 0 || curPos(1) == width - 1)) curPos(2)
+        else {
+          curQueue.enqueueAll(
+            moves
+              .withFilter(move =>
+                (move(0) + curPos(0)) < high &&
+                (move(0) + curPos(0)) >= 0 &&
+                (move(1) + curPos(1)) < width &&
+                (move(1) + curPos(1)) >= 0 &&
+                maze(move(0) + curPos(0))(move(1) + curPos(1)) == '.')
+              .map(move => Array(move(0) + curPos(0), move(1) + curPos(1), curPos(2) + 1))
+          )
+
+          maze(curPos(0))(curPos(1)) = '+'
+
+          nearestExitRec(curQueue)
+        }
+      }
+    }
+
+    nearestExitRec()
+  }
+
+  def twoSum(numbers: Array[Int], target: Int): Array[Int] = {
+    def twoSumRec(left: Int = 0, right: Int = numbers.length - 1): Array[Int] = {
+      if (left == numbers.length - 1) Array.empty
+      else {
+        if (left == right) {
+          LazyList.range(left + 1, numbers.length, 1).find(newLeft => numbers(newLeft) != numbers(left)) match {
+            case Some(l) => twoSumRec(l)
+            case None => Array.empty
+          }
+        }
+        else if (numbers(left) + numbers(right) == target) Array(left + 1, right + 1)
+        else {
+          LazyList.range(right - 1, left, -1).find(newRight => numbers(right) != numbers(newRight)) match {
+            case Some(r) => twoSumRec(left, r)
+            case _ => twoSumRec(left, left)
+          }
+        }
+      }
+    }
+
+    twoSumRec()
+  }
+
+  def moveZeroes(nums: Array[Int]): Unit = {
+    nums.indices.foldLeft(0) { (acc, index) =>
+      if (nums(index) == 0) {
+        acc + 1
+      }
+      else {
+        if (acc != 0) {
+          nums(index - acc) = nums(index)
+          nums(index) = 0
+        }
+        acc
+      }
     }
   }
 }

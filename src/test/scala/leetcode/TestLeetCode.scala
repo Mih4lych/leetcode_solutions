@@ -92,4 +92,37 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass isUgly test")
   }
+
+  test("Test search") {
+    assert(LeetCode.search(Array(-1,0,3,5,9,12), 2) == -1)
+
+    println("pass search test")
+  }
+
+  test("Test searchInsertByHands") {
+    assert(LeetCode.searchInsertByHands(Array(1,3), 2) == 1)
+
+    println("pass searchInsertByHands test")
+  }
+
+  test("Test nearestExit") {
+    assert(LeetCode.nearestExit(Array(Array('+','+','.','+'), Array('.','.','.','+'), Array('+','+','+','.')), Array(1,2)) == 1)
+    assert(LeetCode.nearestExit(Array(Array('+','+','+'), Array('.','.','.'), Array('+','+','+')), Array(1,0)) == 2)
+    assert(LeetCode.nearestExit(Array(Array('.','+')), Array(0,0)) == -1)
+    assert(LeetCode.nearestExit(Array(
+      Array('+','.','+','+','+','+','+'),
+      Array('+','.','+','.','.','.','+'),
+      Array('+','.','+','.','+','.','+'),
+      Array('+','.','.','.','+','.','+'),
+      Array('+','+','+','+','+','.','+')
+    ), Array(0,1)) == 12)
+
+    println("pass nearestExit test")
+  }
+
+  test("Test twoSum") {
+    assert(LeetCode.twoSum(Array(5,25,75), 100) == Array(2,3))
+
+    println("pass twoSum test")
+  }
 }
