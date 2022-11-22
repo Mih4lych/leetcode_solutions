@@ -9,6 +9,7 @@ sealed abstract class RList[+T] {
   def length: Int
   def reverse: RList[T]
   def ++[R >: T](otherList: RList[R]): RList[R]
+  def removeAt(index: Int): RList[T]
 }
 
 case object RNil extends RList[Nothing] {
@@ -19,6 +20,7 @@ case object RNil extends RList[Nothing] {
   override def length: Int = 0
   override def reverse: RList[Nothing] = this
   override def ++[R >: Nothing](otherList: RList[R]): RList[R] = otherList
+  override def removeAt(index: Int): RList[Nothing] = this
 
   override def toString: String = "[]"
 }
@@ -78,6 +80,26 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
     concatRec(this.reverse, otherList)
   }
 
+  override def removeAt(index: Int): RList[T] = {
+    def removeAtRec(rem: RList[T], result: RList[T], counter: Int): RList[T] = {
+      if (counter == index) {
+        rem match {
+          case _ :: t => result.reverse ++ t
+          case RNil => this
+        }
+      }
+      else {
+        rem match {
+          case h :: t => removeAtRec(t, h :: result, counter + 1)
+          case RNil => this
+        }
+      }
+    }
+
+    if (index < 0) this
+    else removeAtRec(this, RNil, 0)
+  }
+
   override def toString: String = {
     def toStringRec(list: RList[T], accStr: String): String = {
       list match {
@@ -105,8 +127,9 @@ object RList {
   }
 }
 
-object ListProblems extends App{
+object ListProblems extends App {
  val testReverse = (1 :: 2 :: 3 :: RNil).reverse
 
  println(testReverse)
+ println(testReverse.removeAt(0))
 }
