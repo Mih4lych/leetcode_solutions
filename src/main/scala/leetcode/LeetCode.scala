@@ -877,15 +877,17 @@ object LeetCode extends App {
   }
 
   def numSquares(n: Int): Int = {
-    val arrOfSolutions = Array.fill(n + 1)(0)
+    val arrOfSolutions = Array.fill(n + 1)(Int.MaxValue)
+    arrOfSolutions(0) = 0
+    val numSquares = Math.sqrt(n).toInt
+    (1 to numSquares).foreach { index =>
+      arrOfSolutions(index * index) = 1
+    }
 
     (1 to n).foreach { index =>
-      val sqrt = Math.sqrt(index).toInt
-      var minVal = index
-      (1 to sqrt).foreach { possiblePath =>
-        minVal = Math.min(minVal, 1 + arrOfSolutions(index - possiblePath))
+      (0 to index / 2).foreach { anotherIndex =>
+        arrOfSolutions(index) = Math.min(arrOfSolutions(index), arrOfSolutions(anotherIndex) + arrOfSolutions(index - anotherIndex))
       }
-      arrOfSolutions(index) = minVal
     }
 
     arrOfSolutions(n)
