@@ -855,4 +855,24 @@ object LeetCode extends App {
       }
     }
   }
+
+  def reverseString(s: Array[Char]): Unit = {
+    def reverseRec(left: Int, right: Int): Unit = {
+      if (left >= right) ()
+      else if (s(left) == s(right)) reverseRec(left + 1, right - 1)
+      else {
+        val memo = s(left)
+        s(left) = s(right)
+        s(right) = memo
+
+        reverseRec(left + 1, right - 1)
+      }
+    }
+
+    reverseRec(0, s.length - 1)
+  }
+
+  def reverseWordsInside(s: String): String = {
+    s.split(" ").view.map(_.reverse).mkString(" ")
+  }
 }
