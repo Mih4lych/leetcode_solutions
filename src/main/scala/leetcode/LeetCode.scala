@@ -875,4 +875,19 @@ object LeetCode extends App {
   def reverseWordsInside(s: String): String = {
     s.split(" ").view.map(_.reverse).mkString(" ")
   }
+
+  def numSquares(n: Int): Int = {
+    val arrOfSolutions = Array.fill(n + 1)(0)
+
+    (1 to n).foreach { index =>
+      val sqrt = Math.sqrt(index).toInt
+      var minVal = index
+      (1 to sqrt).foreach { possiblePath =>
+        minVal = Math.min(minVal, 1 + arrOfSolutions(index - possiblePath))
+      }
+      arrOfSolutions(index) = minVal
+    }
+
+    arrOfSolutions(n)
+  }
 }

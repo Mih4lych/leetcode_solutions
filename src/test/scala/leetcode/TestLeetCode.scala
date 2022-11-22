@@ -125,4 +125,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass twoSum test")
   }
+
+  test("Test numSquares") {
+    assert(LeetCode.numSquares(12) == 3)
+
+    println("pass numSquares test")
+  }
 }
