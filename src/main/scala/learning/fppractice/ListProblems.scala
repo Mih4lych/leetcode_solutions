@@ -10,6 +10,10 @@ sealed abstract class RList[+T] {
   def reverse: RList[T]
   def ++[R >: T](otherList: RList[R]): RList[R]
   def removeAt(index: Int): RList[T]
+  def map[R](f: T => R): RList[R]
+  def flatMap[R](f: T => RList[R]): RList[R]
+  def filter(f: T => Boolean): RList[T]
+  def rle: RList[(T, Int)]
 }
 
 case object RNil extends RList[Nothing] {
@@ -22,6 +26,13 @@ case object RNil extends RList[Nothing] {
   override def ++[R >: Nothing](otherList: RList[R]): RList[R] = otherList
   override def removeAt(index: Int): RList[Nothing] = this
 
+  override def map[R](f: Nothing => R): RList[R] = this
+
+  override def flatMap[R](f: Nothing => RList[R]): RList[R] = this
+
+  override def filter(f: Nothing => Boolean): RList[Nothing] = this
+
+  override def rle: RList[(Nothing, Int)] = this
   override def toString: String = "[]"
 }
 
@@ -100,6 +111,55 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
     else removeAtRec(this, RNil, 0)
   }
 
+  override def map[R](f: T => R): RList[R] = {
+    def mapRec(curList: RList[T], newList: RList[R]): RList[R] = {
+      curList match {
+        case h :: t => mapRec(t, f(h) :: newList)
+        case RNil => newList.reverse
+      }
+    }
+
+    mapRec(this, RNil)
+  }
+
+  override def flatMap[R](f: T => RList[R]): RList[R] = {
+    def flatMapRec(curList: RList[T], newList: RList[R]): RList[R] = {
+      curList match {
+        case h :: t => flatMapRec(t, f(h).reverse ++ newList)
+        case RNil => newList.reverse
+      }
+    }
+
+    flatMapRec(this, RNil)
+  }
+
+  override def filter(f: T => Boolean): RList[T] = {
+    def filterRec(curList: RList[T], newList: RList[T]): RList[T] = {
+      curList match {
+        case h :: t => filterRec(t, if (f(h)) h :: newList else newList)
+        case RNil => newList.reverse
+      }
+    }
+
+    filterRec(this, RNil)
+  }
+
+  override def rle: RList[(T, Int)] = {
+    def rleRec(curList: RList[T], acc: RList[(T, Int)], curPair: (T, Int)): RList[(T, Int)] = {
+      curList match {
+        case h :: t =>
+          if (curPair._1 == h)
+            rleRec(t, acc, (curPair._1, curPair._2 + 1))
+          else {
+            rleRec(t, curPair :: acc, (h, 1))
+          }
+        case RNil => (curPair :: acc).reverse
+      }
+    }
+
+    rleRec(this.tail, RNil, (this.head, 1))
+  }
+
   override def toString: String = {
     def toStringRec(list: RList[T], accStr: String): String = {
       list match {
@@ -129,7 +189,10 @@ object RList {
 
 object ListProblems extends App {
  val testReverse = (1 :: 2 :: 3 :: RNil).reverse
+ val testRLE = (1 :: 1 :: 2 :: 3 :: 3 :: 3 :: 4 :: RNil).reverse
 
  println(testReverse)
  println(testReverse.removeAt(0))
+ println(testReverse.flatMap(1 :: _ :: RNil))
+  println(testRLE.rle)
 }
