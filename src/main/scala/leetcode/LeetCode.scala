@@ -892,4 +892,35 @@ object LeetCode extends App {
 
     arrOfSolutions(n)
   }
+
+  def isValidSudoku(board: Array[Array[Char]]): Boolean = {
+    def recSol(row: Int): Boolean = {
+      if (row > 8) true
+      else {
+        //check the line
+        if (!isValid(board(row))) false
+        else if (
+          !isValid(
+            for {
+              line <- board
+            } yield line(row))) false
+        else if (!isValid(
+          board(row / 3 * 3).slice(row % 3 * 3, row % 3 * 3 + 3) ++
+          board(row / 3 * 3 + 1).slice(row % 3 * 3, row % 3 * 3 + 3) ++
+          board(row / 3 * 3 + 2).slice(row % 3 * 3, row % 3 * 3 + 3))) false
+        else
+          recSol(row + 1)
+      }
+    }
+
+    def isValid(line: Array[Char], index: Int = 0): Boolean = {
+      if (index > 7) true
+      else {
+        if ((index + 1 to 8).exists(checkIndex => line(index) != '.' && line(checkIndex) != '.' && line(index) == line(checkIndex))) false
+        else isValid(line, index + 1)
+      }
+    }
+
+    recSol(0)
+  }
 }
