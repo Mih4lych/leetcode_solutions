@@ -923,4 +923,69 @@ object LeetCode extends App {
 
     recSol(0)
   }
+
+  class ListNode(_x: Int = 0, _next: ListNode = null) {
+    var next: ListNode = _next
+    var x: Int = _x
+  }
+
+  def middleNode(head: ListNode): ListNode = {
+    def length(curNode: ListNode = head, finalLength: Int = 0): Int = {
+      Option(curNode) match {
+        case Some(n) => length(n.next, finalLength + 1)
+        case None => finalLength
+      }
+    }
+
+    def getMiddle(curNode: ListNode = head, steps: Int): ListNode = {
+      if (steps > 0) {
+        getMiddle(curNode.next, steps - 1)
+      }
+      else {
+        curNode
+      }
+    }
+    val listLength = length()
+
+    if (listLength % 2 == 1) {
+      getMiddle(steps = listLength / 2)
+    }
+    else {
+      getMiddle(steps = listLength / 2 + 1)
+    }
+  }
+
+  def middleNodeFastSlow(head: ListNode): ListNode = {
+    def fastSlow(fast: ListNode, slow: ListNode): ListNode = {
+      Option(fast) match {
+        case Some(faster) =>
+          Option(faster.next) match {
+            case Some(fastest) => fastSlow(fastest, slow.next)
+            case None => slow
+          }
+        case None => slow
+      }
+    }
+
+    fastSlow(head, head)
+  }
+
+  /*def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
+    def removeAtRec(rem: ListNode, result: ListNode, steps: Int = length() - n): ListNode = {
+      if (steps == 0) {
+        result.next = rem.next
+        result
+      }
+      else {
+        removeAtRec()
+      }
+    }
+
+    def length(curNode: ListNode = head, finalLength: Int = 0): Int = {
+      Option(curNode) match {
+        case Some(n) => length(n.next, finalLength + 1)
+        case None => finalLength
+      }
+    }
+  }*/
 }
