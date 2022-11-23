@@ -970,14 +970,18 @@ object LeetCode extends App {
     fastSlow(head, head)
   }
 
-  /*def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
+  def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
     def removeAtRec(rem: ListNode, result: ListNode, steps: Int = length() - n): ListNode = {
       if (steps == 0) {
-        result.next = rem.next
-        result
+        rem.next
+      }
+      else if (steps == 1) {
+        result.next = Option(rem.next).map(_.next).orNull
+
+        head
       }
       else {
-        removeAtRec()
+        removeAtRec(rem.next, result.next, steps - 1)
       }
     }
 
@@ -987,5 +991,7 @@ object LeetCode extends App {
         case None => finalLength
       }
     }
-  }*/
+
+    removeAtRec(head, head)
+  }
 }
