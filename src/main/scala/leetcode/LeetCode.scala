@@ -1,7 +1,9 @@
 package leetcode
 
+import scala.::
 import scala.annotation.tailrec
 import scala.collection.Searching.{Found, InsertionPoint}
+import scala.collection.immutable.Queue
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.util.Try
@@ -993,5 +995,158 @@ object LeetCode extends App {
     }
 
     removeAtRec(head, head)
+  }
+
+  def lengthOfLongestSubstring(s: String): Int = {
+    val strLength = s.length
+
+    def lengthRec(left: Int = 0, right: Int = 1, visited: Set[Char] = Set.empty, res: Int = 1): Int = {
+      if (left >= strLength - 1) res
+      else if (right >= strLength) res.max(visited.size)
+      else {
+        if (!visited(s(right))) {
+          val newVisited = visited + s(right)
+
+          lengthRec(left, right + 1, newVisited, res)
+        }
+        else {
+          lengthRec(left + 1, left + 2, Set.empty, res.max(visited.size))
+        }
+      }
+    }
+    lengthRec()
+  }
+
+  def checkInclusion(s1: String, s2: String): Boolean = {
+    val s1Length = s1.length
+    val s2Length = s2.length
+
+    val s1Counter = Array.fill(26)(0)
+
+    s1.foreach{ char => s1Counter(char - 'a') += 1}
+    def checkInclusionRec(s2Counter: Array[Int] = Array.fill(26)(0), curS1Index: Int = 0, curS2Index: Int = 0): Boolean = {
+      if (curS2Index == s2Length - s1Length + 1) false
+      else if (curS1Index == s1Length && (s1Counter sameElements s2Counter)) true
+      else {
+        if (curS1Index == s1Length) {
+          s2Counter.indices.foreach(s2Counter(_) = 0)
+
+          checkInclusionRec(s2Counter, 0, curS2Index + 1)
+        }
+        else {
+          s2Counter(s2(curS2Index + curS1Index) - 'a') += 1
+
+          checkInclusionRec(s2Counter, curS1Index + 1, curS2Index)
+        }
+      }
+    }
+
+    checkInclusionRec()
+  }
+
+  def floodFill(image: Array[Array[Int]], sr: Int, sc: Int, color: Int): Array[Array[Int]] = {
+    val rows = image.length
+    val columns = image(0).length
+    val startingColor = image(sr)(sc)
+
+    def floodFillRec(stack: List[(Int, Int)]): Unit = {
+      if (stack.nonEmpty) {
+        val (i, j) = stack.head
+
+        image(i)(j) = color
+
+        floodFillRec(getConnected(i, j) ::: stack.tail)
+      }
+    }
+
+    def getConnected(i: Int, j: Int): List[(Int, Int)] = {
+      val listBuf = ListBuffer[(Int, Int)]()
+      if (i - 1 >= 0 && image(i - 1)(j) == startingColor) {
+        listBuf += ((i - 1, j))
+      }
+      if (j + 1 < columns && image(i)(j + 1) == startingColor) {
+        listBuf += ((i, j + 1))
+      }
+      if (j - 1 >= 0 && image(i)(j - 1) == startingColor) {
+        listBuf += ((i, j - 1))
+      }
+      if (i + 1 < rows && image(i + 1)(j) == startingColor) {
+        listBuf += ((i + 1, j))
+      }
+
+      listBuf.toList
+    }
+
+    if (image(sr)(sc) != color) {
+      floodFillRec(List((sr, sc)))
+    }
+
+    image
+  }
+
+  def maxAreaOfIsland(grid: Array[Array[Int]]): Int = {
+    val rows = grid.length
+    val columns = grid(0).length
+
+    def maxAreaOfIslandRec(curRow: Int = 0, curColumn: Int = 0, visited: Set[String] = Set.empty, curMax: Int = 0): Int = {
+      if (curRow == rows) {
+        curMax
+      }
+      else if (curColumn == columns) {
+        maxAreaOfIslandRec(curRow + 1, 0, visited, curMax)
+      }
+      else {
+        if (grid(curRow)(curColumn) == 1 && !visited(s"$curRow/$curColumn")) {
+          val (newVisited, curArea) = bfs(visited, List((curRow, curColumn)))
+
+          maxAreaOfIslandRec(curRow, curColumn + 1, newVisited, curMax.max(curArea))
+        }
+        else {
+          maxAreaOfIslandRec(curRow, curColumn + 1, visited, curMax)
+        }
+      }
+    }
+
+    def bfs(visited: Set[String], stack: List[(Int, Int)], area: Int = 0): (Set[String], Int) = {
+      if (stack.isEmpty) (visited, area)
+      else {
+        val (i, j) = stack.head
+        if (!visited(s"$i/$j")) {
+          val listBuf = ListBuffer[(Int, Int)]()
+          if (i - 1 >= 0 && grid(i - 1)(j) == 1 && !visited(s"${(i - 1)}/$j")) {
+            listBuf += ((i - 1, j))
+          }
+          if (j + 1 < columns && grid(i)(j + 1) == 1 && !visited(s"$i/${j + 1}")) {
+            listBuf += ((i, j + 1))
+          }
+          if (j - 1 >= 0 && grid(i)(j - 1) == 1 && !visited(s"$i/${j - 1}")) {
+            listBuf += ((i, j - 1))
+          }
+          if (i + 1 < rows && grid(i + 1)(j) == 1 && !visited(s"${(i + 1)}/$j")) {
+            listBuf += ((i + 1, j))
+          }
+
+          bfs(visited + s"$i/$j", listBuf.toList ::: stack.tail, area + 1)
+        }
+        else {
+          bfs(visited, stack.tail, area)
+        }
+      }
+    }
+
+    maxAreaOfIslandRec()
+  }
+
+  def mergeTrees(root1: TreeNode, root2: TreeNode): TreeNode = {
+    (Option(root1), Option(root2)) match {
+      case (Some(r1), Some(r2)) =>
+        new TreeNode(_value = r1.value + r2.value, _left = mergeTrees(r1.left, r2.left), _right = mergeTrees(r1.right, r2.right))
+      case (Some(r1), _) =>
+        r1
+      case (_, Some(r2)) =>
+        r2
+      case _ =>
+        null
+    }
   }
 }
