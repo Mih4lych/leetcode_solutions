@@ -137,4 +137,22 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass isValidSudoku test")
   }
+
+  test("Test checkInclusion") {
+    assert(LeetCode.checkInclusion("adc", "dcda"))
+
+    println("pass checkInclusion test")
+  }
+
+  test("Test floodFill") {
+    assert(LeetCode.floodFill(Array(Array(1,1,1),Array(1,1,0),Array(1,0,1)), 1, 1, 2).sameElements(Array(Array(2,2,2),Array(2,2,0),Array(2,0,1))))
+
+    println("pass floodFill test")
+  }
+
+  test("Test maxAreaOfIsland") {
+    assert(LeetCode.maxAreaOfIsland(Array(Array(1,1,0,0,0),Array(1,1,0,0,0),Array(0,0,0,1,1),Array(0,0,0,1,1))) == 4)
+
+    println("pass maxAreaOfIsland test")
+  }
 }
