@@ -1162,4 +1162,17 @@ object LeetCode extends App {
       list2
     }
   }
+
+  def reverseList(head: ListNode): ListNode = {
+    def reverseListRec(curHead: ListNode, acc: ListNode): ListNode = {
+      if (curHead == null) {
+        acc
+      }
+      else {
+        reverseListRec(curHead.next, new ListNode(curHead.x, acc))
+      }
+    }
+
+    reverseListRec(head, null)
+  }
 }
