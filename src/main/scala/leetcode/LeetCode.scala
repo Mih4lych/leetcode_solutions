@@ -1162,4 +1162,13 @@ object LeetCode extends App {
       list2
     }
   }
+
+  def climbStairs(n: Int): Int = {
+    def rec(steps: Int = 0, first: Int = 0, second: Int = 1): Int = {
+      if (steps == n) second
+      else rec(steps, second, first + second)
+    }
+
+    rec(n)
+  }
 }
