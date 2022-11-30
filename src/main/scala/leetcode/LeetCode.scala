@@ -1163,6 +1163,19 @@ object LeetCode extends App {
     }
   }
 
+  def reverseList(head: ListNode): ListNode = {
+    def reverseListRec(curHead: ListNode, acc: ListNode): ListNode = {
+      if (curHead == null) {
+        acc
+      }
+      else {
+        reverseListRec(curHead.next, new ListNode(curHead.x, acc))
+      }
+    }
+
+    reverseListRec(head, null)
+  }
+
   def climbStairs(n: Int): Int = {
     def rec(steps: Int = 0, first: Int = 0, second: Int = 1): Int = {
       if (steps == n) second

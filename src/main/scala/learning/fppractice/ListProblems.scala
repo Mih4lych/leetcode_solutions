@@ -1,5 +1,9 @@
 package learning.fppractice
 
+import zio.test.{Result, live}
+
+import java.util.Random
+
 sealed abstract class RList[+T] {
   def head: T
   def tail: RList[T]
@@ -14,6 +18,9 @@ sealed abstract class RList[+T] {
   def flatMap[R](f: T => RList[R]): RList[R]
   def filter(f: T => Boolean): RList[T]
   def rle: RList[(T, Int)]
+  def duplicateEach(time: Int): RList[T]
+  def rotate(steps: Int): RList[T]
+  def sample(size: Int): RList[T]
 }
 
 case object RNil extends RList[Nothing] {
@@ -33,6 +40,11 @@ case object RNil extends RList[Nothing] {
   override def filter(f: Nothing => Boolean): RList[Nothing] = this
 
   override def rle: RList[(Nothing, Int)] = this
+
+  override def duplicateEach(time: Int): RList[Nothing] = this
+  override def rotate(steps: Int): RList[Nothing] = this
+  override def sample(size: Int): RList[Nothing] = this
+
   override def toString: String = "[]"
 }
 
@@ -130,7 +142,26 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
       }
     }
 
-    flatMapRec(this, RNil)
+    def betterFlatMap(curList: RList[T], acc: RList[RList[R]]): RList[R] = {
+      curList match {
+        case h :: t => betterFlatMap(t, f(h).reverse :: acc)
+        case RNil => concatAll(acc, RNil, RNil)
+      }
+
+    }
+
+    def concatAll( remLists: RList[RList[R]], curList: RList[R], acc: RList[R]): RList[R] = {
+      curList match {
+        case h :: t => concatAll(remLists, t, h :: acc)
+        case RNil =>
+          remLists match {
+            case h :: t => concatAll(t, h, acc)
+            case RNil => acc
+          }
+      }
+    }
+
+    betterFlatMap(this, RNil)
   }
 
   override def filter(f: T => Boolean): RList[T] = {
@@ -160,6 +191,50 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
     rleRec(this.tail, RNil, (this.head, 1))
   }
 
+  override def duplicateEach(time: Int): RList[T] = {
+    def duplicateEachRec(curList: RList[T], result: RList[T]): RList[T] = {
+      curList match {
+        case h :: t => duplicateEachRec(t, (1 to time).foldLeft(result)((acc, _) => h :: acc))
+        case RNil => result.reverse
+      }
+    }
+
+    duplicateEachRec(this, RNil)
+  }
+
+  override def rotate(steps: Int): RList[T] = {
+    def rotateRec(rem: RList[T], shift: RList[T], remSteps: Int): RList[T] = {
+      if (remSteps == 0) {
+        rem ++ shift.reverse
+      }
+      else {
+        rem match {
+          case h :: t => rotateRec(t, h :: shift, remSteps - 1)
+          case RNil => rotateRec(this.tail, this.head :: RNil, remSteps - 1)
+        }
+      }
+    }
+
+    rotateRec(this, RNil, steps)
+  }
+
+  override def sample(size: Int): RList[T] = {
+    val length = this.length
+
+    def sampleRec(result: RList[T], remSize: Int): RList[T] = {
+      if (remSize == 0) result.reverse
+      else {
+        sampleRec(this(new Random().nextInt(length)) :: result, remSize - 1)
+      }
+    }
+    def sampleElegant: RList[T] =
+      (1 to size).foldLeft(RNil.asInstanceOf[RList[T]])((acc, _) => this(new Random().nextInt(length)) :: acc)
+
+    if (size < 0) RNil
+    else sampleElegant
+  }
+
+
   override def toString: String = {
     def toStringRec(list: RList[T], accStr: String): String = {
       list match {
@@ -185,14 +260,33 @@ object RList {
 
     fromRec(iterable, RNil)
   }
+
+  def duplicateEach_v2[T](list: RList[T], time: Int): RList[T] = {
+    def duplicateEachRec(curList: RList[T], dupRem: Int, result: RList[T]): RList[T] = {
+      curList match {
+        case h :: _ if dupRem > 0 => duplicateEachRec(curList, dupRem - 1, h :: result)
+        case _ :: t if dupRem == 0 => duplicateEachRec(t, time, result)
+        case RNil => result.reverse
+      }
+    }
+
+    duplicateEachRec(list, time, RNil)
+  }
 }
 
 object ListProblems extends App {
- val testReverse = (1 :: 2 :: 3 :: RNil).reverse
- val testRLE = (1 :: 1 :: 2 :: 3 :: 3 :: 3 :: 4 :: RNil).reverse
+  val testReverse = (1 :: 2 :: 3 :: RNil).reverse
+  val testRLE = (1 :: 1 :: 2 :: 3 :: 3 :: 3 :: 4 :: RNil).reverse
 
- println(testReverse)
- println(testReverse.removeAt(0))
- println(testReverse.flatMap(1 :: _ :: RNil))
+  println(testReverse)
+  println(testReverse.removeAt(0))
+  println(testReverse.flatMap(1 :: _ :: RNil))
   println(testRLE.rle)
+  println(testReverse.duplicateEach(2))
+  println(RList.duplicateEach_v2(testReverse, 2))
+  println(testReverse.rotate(2))
+  println(testReverse.rotate(3))
+  println(testReverse.rotate(6))
+  println(testReverse.sample(6))
+  println(testReverse.flatMap(1 :: _ :: RNil))
 }
