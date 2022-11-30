@@ -262,7 +262,41 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
   }
 
   override def mergeSort[R >: T](implicit ordering: Ordering[R]): RList[R] = {
-    ???
+    def mergeTailRec(small: RList[RList[R]], big: RList[RList[R]]): RList[R] = {
+      small match {
+        case first :: second :: tail =>
+          mergeTailRec(tail, union(first, second, RNil) :: big)
+        case h :: RNil =>
+          mergeTailRec(RNil, h :: big)
+        case RNil =>
+          big match {
+            case h :: RNil =>
+              h
+            case _ =>
+              mergeTailRec(big, RNil)
+          }
+      }
+    }
+
+    def union(left: RList[R], right: RList[R], acc: RList[R]): RList[R] = {
+      (left, right) match {
+        case (h1 :: t1, h2 :: t2) =>
+          if (ordering.lteq(h1, h2)) {
+            union(t1, right, h1 :: acc)
+          }
+          else {
+            union(left, t2, h2 :: acc)
+          }
+        case (l, RNil) =>
+          acc.reverse ++ l
+        case (RNil, r) =>
+          acc.reverse ++ r
+        case _ =>
+          acc.reverse
+      }
+    }
+
+    mergeTailRec(this.map(_ :: RNil), RNil)
   }
 
   override def toString: String = {
@@ -322,4 +356,6 @@ object ListProblems extends App {
   println(testReverse.sample(6))
   println(testReverse.flatMap(1 :: _ :: RNil))
   println(testOrder.sorted(ordering))
+  println(testOrder.mergeSort(ordering))
+  println((3 :: RNil).mergeSort(ordering))
 }
