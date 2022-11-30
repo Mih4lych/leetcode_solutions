@@ -1,5 +1,6 @@
 package learning.fppractice
 
+import sun.security.util.Length
 import zio.test.{Result, live}
 
 import java.util.Random
@@ -21,6 +22,8 @@ sealed abstract class RList[+T] {
   def duplicateEach(time: Int): RList[T]
   def rotate(steps: Int): RList[T]
   def sample(size: Int): RList[T]
+  def sorted[R >: T](ordering: Ordering[R]): RList[R]
+  def mergeSort[R >: T](implicit ordering: Ordering[R]): RList[R]
 }
 
 case object RNil extends RList[Nothing] {
@@ -44,6 +47,8 @@ case object RNil extends RList[Nothing] {
   override def duplicateEach(time: Int): RList[Nothing] = this
   override def rotate(steps: Int): RList[Nothing] = this
   override def sample(size: Int): RList[Nothing] = this
+  override def sorted[R >: Nothing](ordering: Ordering[R]): RList[R] = this
+  override def mergeSort[R >: Nothing](implicit ordering: Ordering[R]): RList[R] = this
 
   override def toString: String = "[]"
 }
@@ -234,6 +239,31 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
     else sampleElegant
   }
 
+  override def sorted[R >: T](ordering: Ordering[R]): RList[R] = {
+    def sortedRec(curList: RList[R], acc: RList[R]): RList[R] = {
+      curList match {
+        case RNil => acc
+        case h :: t => sortedRec(t, insert(acc, h))
+      }
+    }
+
+    def insert(list: RList[R], value: R, acc: RList[R] = RNil): RList[R] = {
+      list match {
+        case RNil => (value :: acc).reverse
+        case h :: t =>
+          if (ordering.lteq(value, h))
+            acc.reverse ++ (value :: list)
+          else
+            insert(t, value, h :: acc)
+      }
+    }
+
+    sortedRec(this, RNil)
+  }
+
+  override def mergeSort[R >: T](implicit ordering: Ordering[R]): RList[R] = {
+    ???
+  }
 
   override def toString: String = {
     def toStringRec(list: RList[T], accStr: String): String = {
@@ -277,6 +307,8 @@ object RList {
 object ListProblems extends App {
   val testReverse = (1 :: 2 :: 3 :: RNil).reverse
   val testRLE = (1 :: 1 :: 2 :: 3 :: 3 :: 3 :: 4 :: RNil).reverse
+  val ordering = Ordering.fromLessThan[Int](_ < _)
+  val testOrder = 1 :: 2 :: 4 :: 3 :: RNil
 
   println(testReverse)
   println(testReverse.removeAt(0))
@@ -289,4 +321,5 @@ object ListProblems extends App {
   println(testReverse.rotate(6))
   println(testReverse.sample(6))
   println(testReverse.flatMap(1 :: _ :: RNil))
+  println(testOrder.sorted(ordering))
 }
