@@ -24,6 +24,7 @@ sealed abstract class RList[+T] {
   def sample(size: Int): RList[T]
   def sorted[R >: T](ordering: Ordering[R]): RList[R]
   def mergeSort[R >: T](implicit ordering: Ordering[R]): RList[R]
+  def quickSort[R >: T](implicit ordering: Ordering[R]): RList[R]
 }
 
 case object RNil extends RList[Nothing] {
@@ -49,6 +50,7 @@ case object RNil extends RList[Nothing] {
   override def sample(size: Int): RList[Nothing] = this
   override def sorted[R >: Nothing](ordering: Ordering[R]): RList[R] = this
   override def mergeSort[R >: Nothing](implicit ordering: Ordering[R]): RList[R] = this
+  override def quickSort[R >: Nothing](implicit ordering: Ordering[R]): RList[R] = this
 
   override def toString: String = "[]"
 }
@@ -299,6 +301,40 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
     mergeTailRec(this.map(_ :: RNil), RNil)
   }
 
+  override def quickSort[R >: T](implicit ordering: Ordering[R]): RList[R] = {
+    def sort(curCheck: RList[RList[R]], acc: RList[RList[R]]): RList[R] = {
+      curCheck match {
+        case h :: t =>
+          h match {
+            case RNil =>
+              sort(t, acc)
+            case _ :: RNil =>
+              sort(t, h :: RNil ++ acc)
+            case _ =>
+              sort(split(h.tail, h.head, RNil, RNil) ++ t, acc)
+          }
+        case RNil =>
+          acc.flatMap(l => l).reverse
+      }
+    }
+
+    def split(curList: RList[R], pivot: R, left: RList[R], right: RList[R]): RList[RList[R]] = {
+      curList match {
+        case h :: t =>
+          if (ordering.lteq(h, pivot)) {
+            split(t, pivot, h :: left, right)
+          }
+          else {
+            split(t, pivot, left, h :: right)
+          }
+        case RNil =>
+          left :: (pivot :: RNil) :: right :: RNil
+      }
+    }
+
+    sort(this :: RNil, RNil)
+  }
+
   override def toString: String = {
     def toStringRec(list: RList[T], accStr: String): String = {
       list match {
@@ -358,4 +394,8 @@ object ListProblems extends App {
   println(testOrder.sorted(ordering))
   println(testOrder.mergeSort(ordering))
   println((3 :: RNil).mergeSort(ordering))
+  println((3 :: 3 :: RNil).mergeSort(ordering))
+  println(testOrder.quickSort(ordering))
+  println((3:: RNil).quickSort(ordering))
+  println((3:: 2 :: 5::3 :: 6:: 2 :: 1::  RNil).quickSort(ordering))
 }
