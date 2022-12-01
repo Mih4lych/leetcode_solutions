@@ -155,4 +155,10 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass maxAreaOfIsland test")
   }
+
+  test("Test halvesAreAlike") {
+    assert(LeetCode.halvesAreAlike("book"))
+
+    println("pass halvesAreAlike test")
+  }
 }

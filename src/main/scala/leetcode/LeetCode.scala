@@ -1184,4 +1184,16 @@ object LeetCode extends App {
 
     rec(n)
   }
+
+  def halvesAreAlike(s: String): Boolean = {
+    val vowels = List('a', 'e', 'i', 'o', 'u')
+    val (str1, str2) = s.toLowerCase.splitAt(s.length / 2)
+
+    str1.count(vowels.contains) == str2.count(vowels.contains)
+  }
+
+  def isPowerOfTwo(n: Int): Boolean = {
+    if (n <= 0) false
+    else n.toBinaryString.count(_ == '1') == 1
+  }
 }
