@@ -309,12 +309,12 @@ case class ::[T](override val head: T, override val tail: RList[T]) extends RLis
             case RNil =>
               sort(t, acc)
             case _ :: RNil =>
-              sort(t, h :: RNil ++ acc)
+              sort(t, acc ++ (h :: RNil))
             case _ =>
               sort(split(h.tail, h.head, RNil, RNil) ++ t, acc)
           }
         case RNil =>
-          acc.flatMap(l => l).reverse
+          acc.flatMap(l => l)
       }
     }
 
