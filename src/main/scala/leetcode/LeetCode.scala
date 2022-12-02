@@ -1196,4 +1196,20 @@ object LeetCode extends App {
     if (n <= 0) false
     else n.toBinaryString.count(_ == '1') == 1
   }
+
+  def reverseBits(x: Int): Int = {
+    val padded = x.toBinaryString.reverse.padTo(32, '0')
+    java.lang.Long.parseLong(padded, 2).toInt
+  }
+
+  def singleNumber(nums: Array[Int]): Int = {
+    nums.foldLeft((Set.empty[Int], 0)) {(acc, cur) =>
+      if (acc._1(cur)) {
+        (acc._1, acc._2 - cur)
+      }
+      else {
+        (acc._1 + cur, acc._2 + cur)
+      }
+    }._2
+  }
 }
