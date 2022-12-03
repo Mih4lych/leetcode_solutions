@@ -87,14 +87,21 @@ object NumberProblems extends App {
   println(largestNumber(List(3, 30, 5, 9, 34)))
 
   def reverseInt(number: Int): Int = {
-    if (number == Int.MinValue) 0
-    else {
-      val result = number.abs.toString.reverse.toInt * number.sign
+    def rec(rem: Int, acc: Int): Int = {
+      if (rem == 0) acc
+      else {
+        val newAcc = acc * 10 + rem % 10
 
-      if (result.sign != number.sign) 0
-      else result
+        if (newAcc.sign < 0) 0
+        else rec(rem / 10, newAcc)
+      }
     }
+
+    if (number == Int.MinValue) 0
+    else if (number < 0) -rec(-number, 0)
+    else rec(number, 0)
   }
 
   println(reverseInt(-54))
+  println(reverseInt(Int.MaxValue))
 }
