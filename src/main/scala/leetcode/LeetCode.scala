@@ -1212,4 +1212,16 @@ object LeetCode extends App {
       }
     }._2
   }
+
+  def frequencySort(s: String): String = {
+    s
+      .toSeq
+      .groupBy(identity)
+      .toList
+      .view
+      .map(pair => (pair._1, pair._2.length))
+      .sortBy(pair => (-(pair._2), pair._1))
+      .map(pair => pair._1.toString * pair._2)
+      .mkString
+  }
 }
