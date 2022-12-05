@@ -1,6 +1,7 @@
 package learning.fppractice
 
 import scala.annotation.tailrec
+import scala.collection.immutable._
 import scala.util.Random
 
 object NumberProblems extends App {
@@ -104,4 +105,131 @@ object NumberProblems extends App {
 
   println(reverseInt(-54))
   println(reverseInt(Int.MaxValue))
+
+  def parseInteger(str: String): Int = {
+    def rec(curStr: String, acc: Int, sign: Int): Int = {
+      if (curStr.isEmpty || !curStr.head.isDigit) acc * sign
+      else {
+        val newAcc = acc * 10 + curStr.head.asDigit
+
+        if (newAcc < 0) {
+          if (sign < 0) Int.MinValue
+          else Int.MaxValue
+        }
+        else {
+          rec(curStr.tail, newAcc, sign)
+        }
+      }
+    }
+
+    val trimStr = str.trim
+
+    val (sign, strWithoutSign) =
+      trimStr.headOption match {
+        case Some('-') => (-1, trimStr.tail)
+        case Some('+') => (1, trimStr.tail)
+        case _ => (1, trimStr)
+      }
+
+    rec(strWithoutSign, 0, sign)
+  }
+
+  println(parseInteger("3912993002391010839293089"))
+  println(parseInteger("-3912993002391010839293089"))
+  println(parseInteger(""))
+  println(parseInteger("  342asda "))
+  println(parseInteger("  0000231  "))
+
+  def uglyNumber(number: Int): Boolean = {
+    def rec(rem: Int, dividers: List[Int]): Boolean = {
+      if (rem == 1) true
+      else if (dividers.isEmpty) false
+      else {
+        if (rem % dividers.head == 0) {
+          rec(rem / dividers.head, dividers)
+        }
+        else {
+          rec(rem, dividers.tail)
+        }
+      }
+    }
+
+    if (number <= 0) false
+    else rec(number, List(2, 3, 5))
+  }
+
+  println(uglyNumber(6))
+  println(uglyNumber(15))
+  println(uglyNumber(100))
+  println(uglyNumber(1))
+
+  println(uglyNumber(14))
+  println(uglyNumber(39))
+
+
+  def nthUgly(index: Int): Int = {
+    def rec(leftSteps: Int, curUgly: Int, next: Int): Int = {
+      if (leftSteps == 0) curUgly
+      else {
+        if (next % 2 == 0) rec(leftSteps - 1, next, next + 1)
+        else if (next % 3 == 0) rec(leftSteps - 1, next, next + 1)
+        else if (next % 5 == 0) rec(leftSteps - 1, next, next + 1)
+        else rec(leftSteps, curUgly, next + 1)
+      }
+    }
+
+    def recWithQueues(leftSteps: Int, curUgly: Int, queueFor2: Queue[Int], queueFor3: Queue[Int], queueFor5: Queue[Int]): Int = {
+      if (leftSteps == 0) curUgly
+      else {
+        val (ugly2, left2) = queueFor2.dequeue
+        val (ugly3, left3) = queueFor3.dequeue
+        val (ugly5, left5) = queueFor5.dequeue
+        val minUgly = ugly2.min(ugly3.min(ugly5))
+
+        val newQueueFor2 = (if (ugly2 == minUgly) left2 else queueFor2).enqueue(minUgly * 2)
+        val newQueueFor3 = (if (ugly3 == minUgly) left3 else queueFor3).enqueue(minUgly * 3)
+        val newQueueFor5 = (if (ugly5 == minUgly) left5 else queueFor5).enqueue(minUgly * 5)
+
+        recWithQueues(leftSteps - 1, minUgly, newQueueFor2, newQueueFor3, newQueueFor5)
+      }
+    }
+
+    //rec(index, 1, 1)
+    if (index == 0) 1
+    else recWithQueues(index, 1, Queue(2), Queue(3), Queue(5))
+  }
+
+  println((0 to 100).map(nthUgly).toList)
+
+
+  def duplicatesBySorted(list: List[Int]): Int = {
+    def rec(sortedList: List[Int]): Int = {
+      sortedList match {
+        case x :: y :: t =>
+          if (x == y)
+            rec(t)
+          else
+            x
+        case x :: Nil => x
+      }
+    }
+
+    rec(list.sorted)
+  }
+
+  def duplicatesBySet(list: List[Int]): Int = {
+    def rec(curList: List[Int], set: Set[Int]): Int = {
+      if (curList.isEmpty) set.head
+      else {
+        if (set.contains(curList.head)) rec(curList.tail, set - curList.head)
+        else  rec(curList.tail, set + curList.head)
+      }
+    }
+
+    rec(list, Set.empty)
+  }
+
+  println(duplicatesBySorted(List(1, 4, 3, 4, 5, 1, 3)))
+  println(duplicatesBySet(List(1, 4, 3, 4, 5, 1, 3)))
+  println(List(1, 4, 3, 4, 5, 1, 3).foldLeft(0)(_ ^ _))
 }
