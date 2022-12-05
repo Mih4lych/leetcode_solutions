@@ -161,4 +161,12 @@ class TestLeetCode extends AnyFunSuite {
 
     println("pass halvesAreAlike test")
   }
+
+  test("Test minimumAverageDifference") {
+    assert(LeetCode.minimumAverageDifference(Array(2,5,3,9,5,3)) == 3)
+    assert(LeetCode.minimumAverageDifference(Array(0)) == 0)
+    assert(LeetCode.altMinAvg(Array(2,5,3,9,5,3)) == 3)
+    assert(LeetCode.altMinAvg(Array(0)) == 0)
+    println("pass minimumAverageDifference test")
+  }
 }

@@ -1220,8 +1220,59 @@ object LeetCode extends App {
       .toList
       .view
       .map(pair => (pair._1, pair._2.length))
-      .sortBy(pair => (-(pair._2), pair._1))
+      .sortBy(pair => (-pair._2, pair._1))
       .map(pair => pair._1.toString * pair._2)
       .mkString
+  }
+
+  def minimumAverageDifference(nums: Array[Int]): Int = {
+    def getMapResult(map: Map[Int, (Long, Long)], index: Int): Map[Int, (Long, Long)] = {
+      if (index == nums.length) map
+      else if (index == 0) {
+        getMapResult(map + (index -> (nums(index), nums.map(_.toLong).sum - nums(index))), index + 1)
+      }
+      else {
+        val (prevLeft, prevRight) = map(index - 1)
+        getMapResult(map + (index -> (prevLeft + nums(index), prevRight - nums(index))), index + 1)
+      }
+    }
+
+    def rec(curIndex: Int, mapRes: Map[Int, (Long, Long)], curMin: Option[(Int, Long)]): Int = {
+      if (curIndex == nums.length) curMin.get._1
+      else {
+        val (resLef, resRight) = mapRes(curIndex)
+        val finalRes = Math.abs(resLef / (curIndex + 1) - (resRight / (if (curIndex == (nums.length - 1)) 1 else nums.length - 1 - curIndex)))
+
+        curMin match {
+          case Some((_, minRes)) =>
+            if (minRes > finalRes) {
+              rec(curIndex + 1, mapRes, Some(curIndex, finalRes))
+            }
+            else {
+              rec(curIndex + 1, mapRes, curMin)
+            }
+          case None =>
+            rec(curIndex + 1, mapRes, Some(curIndex, finalRes))
+        }
+      }
+    }
+
+    rec(0, getMapResult(Map.empty, 0), None)
+  }
+
+  def altMinAvg(nums: Array[Int]): Int = {
+
+    val length = nums.length
+
+    if (length == 0) 0
+    else {
+      nums
+        .scanLeft((0L, nums.map(_.toLong).sum))((acc, num) => (acc._1 + num, acc._2 - num))
+        .zipWithIndex
+        .tail
+        .map(pair => (Math.abs(pair._1._1 / pair._2 - (if (pair._2 == length) 0 else pair._1._2 / (length - pair._2))), pair._2 - 1))
+        .min
+        ._2
+    }
   }
 }
