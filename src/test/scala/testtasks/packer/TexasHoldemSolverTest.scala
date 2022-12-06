@@ -25,25 +25,4 @@ class TexasHoldemSolverTest extends TestCase {
       process("texas-holdem 3d4s5dJsQd 5c4h 7sJd KcAs 9h7h 2dTc Qh8c TsJc"),
     )
   }
-
-  def test_th_2h3h4h5hTs(): Unit = {
-    assertEquals(
-      "Ac6c=As6s AhQs",
-      process("texas-holdem 2h3h4h5hTs AhQs As6s Ac6c"),
-    )
-  }
-
-  def test_th_2h2s3h3s5d(): Unit = {
-    assertEquals(
-      "Kc6d Ac7d",
-      process("texas-holdem 2h2s3h3s5d Ac7d Kc6d"),
-    )
-  }
-
-  def test_th_2h2s3h3sKd(): Unit = {
-    assertEquals(
-      "Qc7d Kc6d",
-      process("texas-holdem 2h2s3h3sKd Qc7d Kc6d"),
-    )
-  }
 }

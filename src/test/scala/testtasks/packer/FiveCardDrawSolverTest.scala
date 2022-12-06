@@ -25,25 +25,4 @@ class FiveCardDrawSolverTest extends TestCase {
       process("five-card-draw 5s3s4c2h9d 8dKsTc6c2c 4h6s8hJd5d 5c3cQdTd9s AhQhKcQc2d KhJs9c5h9h 8c3d7h7dTs"),
     )
   }
-
-  def test_5cd_2h3h4h5hAh(): Unit = {
-    assertEquals(
-      "2h3h4h5hAh AcKcQcJcTc",
-      process("five-card-draw 2h3h4h5hAh AcKcQcJcTc"),
-    )
-  }
-
-  def test_5cd_2c2s3c3sKdQh(): Unit = {
-    assertEquals(
-      "2h2d3h3dKsQc=2c2s3c3sKdQh",
-      process("five-card-draw 2c2s3c3sKdQh 2h2d3h3dKsQc"),
-    )
-  }
-
-  def test_5cd_2c2s3c3sKdJh(): Unit = {
-    assertEquals(
-      "2c2s3c3sKdJh 2h2d3h3dKsQc",
-      process("five-card-draw 2c2s3c3sKdJh 2h2d3h3dKsQc"),
-    )
-  }
 }
