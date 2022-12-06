@@ -14,3 +14,4 @@ libraryDependencies ++= Seq(
 libraryDependencies += "dev.zio" %% "zio"         % "2.0.0"
 libraryDependencies += "dev.zio" %% "zio-streams" % "2.0.0"
 libraryDependencies += "dev.zio" %% "zio-test"    % "2.0.0"
+libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test

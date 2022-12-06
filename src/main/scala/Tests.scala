@@ -42,4 +42,14 @@ object Tests extends App{
   }
 
   println(0 % 1)
+
+  val cardOfBoard = "5c6dAcAsQs".grouped(2).toList
+
+  val boardsCombinations = (for {
+    h1 :: t1 <- cardOfBoard.tails
+    h2 :: t2 <- t1.tails
+    h3 <- t2
+  } yield s"$h1$h2$h3").toList
+
+  println(boardsCombinations.mkString(" "))
 }
