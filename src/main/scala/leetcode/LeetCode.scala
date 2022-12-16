@@ -1275,4 +1275,43 @@ object LeetCode extends App {
         ._2
     }
   }
+
+  class MyQueue() {
+    private var enqueueList = List.empty[Int]
+    private var dequeueList = List.empty[Int]
+
+    def push(x: Int) {
+      enqueueList = x :: enqueueList
+    }
+
+    def pop(): Int = {
+      dequeueList match {
+        case h :: t =>
+          dequeueList = t
+          h
+        case Nil =>
+          swap()
+          pop()
+      }
+    }
+
+    private def swap(): Unit = {
+      dequeueList = enqueueList.reverse
+      enqueueList = List.empty
+    }
+
+    def peek(): Int = {
+      dequeueList match {
+        case h :: _ =>
+          h
+        case Nil =>
+          swap()
+          peek()
+      }
+    }
+
+    def empty(): Boolean = {
+      dequeueList.isEmpty && enqueueList.isEmpty
+    }
+  }
 }
