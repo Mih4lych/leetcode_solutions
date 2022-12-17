@@ -169,4 +169,10 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.altMinAvg(Array(0)) == 0)
     println("pass minimumAverageDifference test")
   }
+
+  test("Test evalRPN") {
+    assert(LeetCode.evalRPN(Array("2","1","+","3","*")) == 9)
+    assert(LeetCode.evalRPN(Array("10","6","9","3","+","-11","*","/","*","17","+","5","+")) == 22)
+    println("pass evalRPN test")
+  }
 }

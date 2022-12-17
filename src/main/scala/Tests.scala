@@ -52,4 +52,9 @@ object Tests extends App{
   } yield s"$h1$h2$h3").toList
 
   println(boardsCombinations.mkString(" "))
+
+  import scala.util.chaining._
+  def multi3(list: List[Int]): List[Int] = list.map(_ * 3)
+  def max(list: List[Int]): Int = max(list)
+  List(1, 2, 3).pipe(multi3).pipe(max).pipe(_ * 3)
 }

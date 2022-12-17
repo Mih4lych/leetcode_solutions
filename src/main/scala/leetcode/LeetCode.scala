@@ -1314,4 +1314,14 @@ object LeetCode extends App {
       dequeueList.isEmpty && enqueueList.isEmpty
     }
   }
+
+  def evalRPN(tokens: Array[String]): Int = {
+    tokens.foldLeft(List.empty[Int]) {
+      case (secondInt :: firstInt :: remStack, "*") => (firstInt * secondInt) :: remStack
+      case (secondInt :: firstInt :: remStack, "/") => (firstInt / secondInt) :: remStack
+      case (secondInt :: firstInt :: remStack, "+") => (firstInt + secondInt) :: remStack
+      case (secondInt :: firstInt :: remStack, "-") => (firstInt - secondInt) :: remStack
+      case (stack, nextNumber) => nextNumber.toInt :: stack
+    }.head
+  }
 }
