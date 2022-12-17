@@ -15,3 +15,10 @@ libraryDependencies += "dev.zio" %% "zio"         % "2.0.0"
 libraryDependencies += "dev.zio" %% "zio-streams" % "2.0.0"
 libraryDependencies += "dev.zio" %% "zio-test"    % "2.0.0"
 libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-core" % "2.7.0",
+)
+
+scalacOptions ++= Seq(
+  "-language:higherKinds"
+)
