@@ -1,4 +1,4 @@
-package learning.cats.exercises
+package learning.cats.rvjexercises
 
 import cats.instances.int._
 import cats.instances.double._
