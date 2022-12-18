@@ -175,4 +175,9 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.evalRPN(Array("10","6","9","3","+","-11","*","/","*","17","+","5","+")) == 22)
     println("pass evalRPN test")
   }
+
+  test("Test dailyTemperatures") {
+    assert(LeetCode.dailyTemperatures(Array(73,74,75,71,69,72,76,73)).sameElements(Array(1,1,4,2,1,1,0,0)))
+    println("pass dailyTemperatures test")
+  }
 }

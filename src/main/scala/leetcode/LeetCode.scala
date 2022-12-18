@@ -1324,4 +1324,32 @@ object LeetCode extends App {
       case (stack, nextNumber) => nextNumber.toInt :: stack
     }.head
   }
+
+  def dailyTemperatures(temperatures: Array[Int]): Array[Int] = {
+    val result = Array.fill(temperatures.length)(0)
+
+    @tailrec
+    def checkTemperature(stack: List[Int], indexForCheck: Int): List[Int] = {
+      stack match {
+        case nextIndex :: t =>
+          if (temperatures(nextIndex) < temperatures(indexForCheck)) {
+            result(nextIndex) = indexForCheck - nextIndex
+
+            checkTemperature(t, indexForCheck)
+          }
+          else indexForCheck :: stack
+        case Nil => indexForCheck :: stack
+      }
+    }
+
+    temperatures.indices.foldLeft(List.empty[Int]) {
+      case (acc, nextIndex) =>
+        acc match {
+          case Nil => nextIndex :: acc
+          case _ => checkTemperature(acc, nextIndex)
+        }
+    }
+
+    result
+  }
 }
