@@ -1,6 +1,5 @@
 package leetcode
 
-import scala.::
 import scala.annotation.tailrec
 import scala.collection.Searching.{Found, InsertionPoint}
 import scala.collection.immutable.Queue
@@ -1351,5 +1350,32 @@ object LeetCode extends App {
     }
 
     result
+  }
+
+  def validPath(n: Int, edges: Array[Array[Int]], source: Int, destination: Int): Boolean = {
+    val graph = edges.foldLeft(Map.empty[Int, List[Int]]) {(acc, nextEdge) =>
+      val (leftVertex, rightVertex) = (nextEdge(0), nextEdge(1))
+      val leftConnections = acc.getOrElse(leftVertex, List())
+      val rightConnections = acc.getOrElse(rightVertex, List())
+
+      acc.updated(leftVertex, rightVertex :: leftConnections).updated(rightVertex, leftVertex :: rightConnections)
+    }
+
+    @tailrec
+    def rec(queue: Queue[Int], visited: Array[Boolean]): Boolean = {
+      if (queue.isEmpty) false
+      else {
+        val (intForCheck, remQueue) = queue.dequeue
+
+        if (intForCheck == destination) true
+        else if (visited(intForCheck)) rec(remQueue, visited)
+        else {
+          visited(intForCheck) = true
+          rec(remQueue.enqueueAll(graph.getOrElse(intForCheck, List())), visited)
+        }
+      }
+    }
+
+    rec(Queue(source), Array.fill(n)(false))
   }
 }
