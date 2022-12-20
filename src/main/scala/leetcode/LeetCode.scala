@@ -1378,4 +1378,24 @@ object LeetCode extends App {
 
     rec(Queue(source), Array.fill(n)(false))
   }
+
+  def canVisitAllRooms(rooms: List[List[Int]]): Boolean = {
+    val arrayRooms = rooms.toArray
+
+    @tailrec
+    def rec(queue: Queue[Int], visited: Array[Boolean]): Boolean = {
+      if (queue.isEmpty) visited.forall(identity)
+      else {
+        val (room, remQueue) = queue.dequeue
+
+        if (visited(room)) rec(remQueue, visited)
+        else {
+          visited(room) = true
+          rec(remQueue.enqueueAll(arrayRooms(room).filterNot(visited)), visited)
+        }
+      }
+    }
+
+    rec(Queue(0), Array.fill(arrayRooms.length)(false))
+  }
 }
