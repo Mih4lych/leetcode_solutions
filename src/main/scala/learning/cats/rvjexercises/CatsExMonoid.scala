@@ -1,9 +1,9 @@
-package learning.cats.bookexercises
+package learning.cats.rvjexercises
 
 import cats.Monoid
 import cats.instances.int._
-import cats.instances.string._
 import cats.instances.map._
+import cats.instances.string._
 import cats.syntax.monoid._
 
 object CatsExMonoid extends App {
