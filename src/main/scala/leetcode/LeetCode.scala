@@ -1391,11 +1391,60 @@ object LeetCode extends App {
         if (visited(room)) rec(remQueue, visited)
         else {
           visited(room) = true
-          rec(remQueue.enqueueAll(arrayRooms(room).filterNot(visited)), visited)
+          rec(remQueue.enqueueAll(arrayRooms(room)), visited)
         }
       }
     }
 
     rec(Queue(0), Array.fill(arrayRooms.length)(false))
+  }
+
+  def possibleBipartition(n: Int, dislikes: Array[Array[Int]]): Boolean = {
+    val graph = dislikes.foldLeft(Map.empty[Int, List[Int]]) { (acc, nextEdge) =>
+      val (leftVertex, rightVertex) = (nextEdge(0) - 1, nextEdge(1) - 1)
+      val leftConnections = acc.getOrElse(leftVertex, List())
+      val rightConnections = acc.getOrElse(rightVertex, List())
+
+      acc.updated(leftVertex, rightVertex :: leftConnections).updated(rightVertex, leftVertex :: rightConnections)
+    }
+
+    @tailrec
+    def rec(queue: Queue[Int], edgesStack: List[Int], visited: Array[Boolean], color: Array[Int]): Boolean = {
+      if (queue.isEmpty && edgesStack.isEmpty) true
+      else if (queue.isEmpty) {
+        edgesStack.dropWhile(visited) match {
+          case h :: t => rec(queue.enqueue(h), t, visited, color)
+          case Nil => true
+        }
+      }
+      else {
+        val (person, remQueue) = queue.dequeue
+
+        if (visited(person)) rec(remQueue, edgesStack, visited, color)
+        else {
+          val curColor =
+            if (color(person) == -1) {
+              color(person) = 0
+              0
+            }
+            else color(person)
+          val curDislikes = graph(person)
+          val (colored, notColored) = curDislikes.partition(color(_) != -1)
+
+          if (colored.exists(color(_) == curColor)) false
+          else {
+            notColored.foreach(color(_) = 1 - curColor)
+
+            visited(person) = true
+            rec(remQueue.enqueueAll(curDislikes), edgesStack, visited, color)
+          }
+        }
+      }
+    }
+
+    graph.headOption match {
+      case Some((person, _)) => rec(Queue(person), graph.keySet.toList, Array.fill(n)(false), Array.fill(n)(-1))
+      case None => true
+    }
   }
 }
