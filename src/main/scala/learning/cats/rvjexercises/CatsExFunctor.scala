@@ -45,4 +45,11 @@ object CatsExFunctor extends App {
   def doubleShorter[F[_] : Functor](container: F[Int]): F[Int] = container.map(_ * 2)
 
   println(doubleShorter[Tree](testTree))
+
+  trait Printable[A] { self =>
+    def format(value: A): String
+
+    def contramap[B](func: B => A): Printable[B] =
+      (value: B) => self.format(func(value))
+  }
 }
