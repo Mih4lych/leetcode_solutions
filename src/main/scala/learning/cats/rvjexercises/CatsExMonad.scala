@@ -3,6 +3,7 @@ package learning.cats.rvjexercises
 import java.util.concurrent.Executors
 import scala.concurrent.{ExecutionContext, Future}
 import cats.Monad
+import cats.data.EitherT
 import cats.instances.future._
 import cats.instances.option._
 import cats.instances.try_._
@@ -10,6 +11,8 @@ import cats.syntax.applicative._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 
+import scala.annotation.tailrec
+import scala.reflect.ClassTag
 import scala.util.Try
 
 object CatsExMonad extends App {
@@ -143,4 +146,160 @@ object CatsExMonad extends App {
   }
 
   println(getResponse(HttpServiceLoad, "asdasd"))
+
+  //Custom monad
+
+  //monad for identity
+  type Identity[T] = T
+
+  implicit object IdentityMonad extends Monad[Identity] {
+    override def pure[A](x: A): Identity[A] = x
+
+    override def flatMap[A, B](fa: Identity[A])(f: A => Identity[B]): Identity[B] = f(fa)
+
+    @tailrec
+    override def tailRecM[A, B](a: A)(f: A => Identity[Either[A, B]]): Identity[B] = {
+      f(a) match {
+        case Right(b) => b
+        case Left(a) => tailRecM(a)(f)
+      }
+    }
+  }
+
+  val identityMonad = Monad[Identity]
+  val identityInt = 5.pure[Identity]
+  println(identityInt.flatMap(int => s"teas $int"))
+
+  //monad for tree
+  sealed trait Tree[+A]
+
+  final case class Leaf[+A](value: A) extends Tree[A]
+
+  final case class Branch[+A](left: Tree[A], right: Tree[A]) extends Tree[A]
+
+  object Tree {
+    def leaf[A](value: A): Leaf[A] = Leaf(value)
+    def branch[A](left: Tree[A], right: Tree[A]): Branch[A] = Branch(left, right)
+  }
+
+  implicit object TreeMonad extends Monad[Tree] {
+    override def pure[A](x: A): Tree[A] = {
+      Tree.leaf(x)
+    }
+
+    override def flatMap[A, B](fa: Tree[A])(f: A => Tree[B]): Tree[B] = {
+      /*fa match {
+        case Leaf(value) => f(value)
+        case Branch(left, right) => Tree.branch(flatMap(left)(f), flatMap(right)(f))
+      }*/
+
+      @tailrec
+      def tailRecFlatMap(todo: List[Tree[A]], expanded: List[Tree[A]], done: List[Tree[B]]): Tree[B] = {
+        if (todo.isEmpty) done.head
+        else {
+          todo.head match {
+            case Leaf(value) => tailRecFlatMap(todo.tail, expanded, f(value) :: done)
+            case node @ Branch(left, right) =>
+              if (expanded.isEmpty || expanded.head != node) {
+                tailRecFlatMap(left :: right :: todo, node :: expanded, done)
+              }
+              else {
+                val newLeft = done.head
+                val newRight = done.tail.head
+                val newBranch = Tree.branch(newLeft, newRight)
+
+                tailRecFlatMap(todo.tail, expanded.tail, newBranch :: done)
+              }
+          }
+        }
+      }
+
+      tailRecFlatMap(List(fa), List(), List())
+    }
+
+    override def tailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
+      def stackRec(tree: Tree[Either[A, B]]): Tree[B] = tree match {
+        case Leaf(Left(a)) => stackRec(f(a))
+        case Leaf(Right(b)) => Tree.leaf(b)
+        case Branch(left, right) => Tree.branch(stackRec(left), stackRec(right))
+      }
+
+      @tailrec
+      def tailRec(todo: List[Tree[Either[A, B]]], expanded: List[Tree[Either[A, B]]], done: List[Tree[B]]): Tree[B] = {
+        if (todo.isEmpty) done.head
+        else {
+          todo.head match {
+            case Leaf(Left(value)) => tailRec(f(value) :: todo.tail, expanded, done)
+            case Leaf(Right(b)) => tailRec(todo.tail, expanded, Tree.leaf(b) :: done)
+            case node @ Branch(left, right) =>
+              if (expanded.isEmpty || expanded.head != node) {
+                tailRec(left :: right :: todo, node :: expanded, done)
+              }
+          else {
+                val newLeft = done.head
+                val newRight = done.tail.head
+                val newBranch = Tree.branch(newLeft, newRight)
+
+                tailRec(todo.tail, expanded.tail, newBranch :: done)
+              }
+          }
+        }
+      }
+
+      tailRec(List(f(a)), List(), List())
+    }
+  }
+
+  val example: Tree[Either[Int, String]] =
+    Branch(
+      Branch(
+        Leaf(Left(1)),
+        Leaf(Left(2))),
+      Branch(
+        Leaf(Left(1)),
+        Leaf(Left(2))),
+    )
+
+  def fun(x: Int): Tree[Either[Int, String]] =
+    if (x == 0) example
+    else Leaf(Right((x * 10).toString))
+
+  println(Monad[Tree].tailRecM(0)(fun))
+
+  //Monad Transformer
+
+  /*
+     We have a multi-machine cluster for your business which will receive a traffic surge following a media appearance.
+     We measure bandwidth in units.
+     We want to allocate TWO of our servers to cope with the traffic spike.
+     We know the current capacity for each server and we know we'll hold the traffic if the sum of bandwidths is > 250.
+    */
+  val bandwidths = Map(
+    "server1.rockthejvm.com" -> 50,
+    "server2.rockthejvm.com" -> 300,
+    "server3.rockthejvm.com" -> 170
+  )
+  type AsyncResponse[T] = EitherT[Future, String, T] // wrapper over Future[Either[String, T]]
+
+  def getBandwidth(server: String): AsyncResponse[Int] = bandwidths.get(server) match {
+    case None => EitherT.left(Future(s"Server $server unreachable"))
+    case Some(b) => EitherT.right(Future(b))
+  }
+
+  // hint: call getBandwidth twice, and combine the result
+  def canWithstandSurge(s1: String, s2: String): AsyncResponse[Boolean] = for {
+    first <- getBandwidth(s1)
+    second <- getBandwidth(s2)
+  } yield first + second > 250
+
+  // hint: call canWithstandSurge + transform
+  def generateTrafficSpikeReport(s1: String, s2: String): AsyncResponse[String] =
+    canWithstandSurge(s1, s2).transform {
+      case Left(s) => Left(s)
+      case Right(true) => Right("all is fine")
+      case Right(false) => Right("all is wrong")
+    }
+
+  val resultFuture = generateTrafficSpikeReport("server2.rockthejvm.com", "server3.rockthejvm.com").value
+  resultFuture.foreach(println)
 }
