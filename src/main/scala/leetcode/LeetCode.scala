@@ -1447,4 +1447,8 @@ object LeetCode extends App {
       case None => true
     }
   }
+
+  def minStoneSum(piles: Array[Int], k: Int): Int = {
+    (0 until k).foldLeft(mutable.PriorityQueue(piles: _*))((queue, _) => queue.addOne(queue.head - queue.dequeue() / 2)).sum
+  }
 }

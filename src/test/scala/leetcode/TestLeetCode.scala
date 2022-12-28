@@ -180,4 +180,13 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.dailyTemperatures(Array(73,74,75,71,69,72,76,73)).sameElements(Array(1,1,4,2,1,1,0,0)))
     println("pass dailyTemperatures test")
   }
+
+  test("Test minStoneSum") {
+    assert(LeetCode.minStoneSum(Array(5,4,9), 2) == 12)
+    assert(LeetCode.minStoneSum(Array(4,3,6,7), 3) == 12)
+    assert(LeetCode.minStoneSum(Array(4122,9928,3477,9942), 6) == 8768)
+    assert(LeetCode.minStoneSum(Array(2695,9184,2908,3869,3779,391,2896,5328), 10) == 10946)
+    assert(LeetCode.minStoneSum(Array(4095,8029,4573,8161,8206,8445,5799,7450,7554), 10) == 29044)
+    println("pass minStoneSum test")
+  }
 }
