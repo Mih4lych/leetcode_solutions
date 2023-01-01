@@ -1451,4 +1451,27 @@ object LeetCode extends App {
   def minStoneSum(piles: Array[Int], k: Int): Int = {
     (0 until k).foldLeft(mutable.PriorityQueue(piles: _*))((queue, _) => queue.addOne(queue.head - queue.dequeue() / 2)).sum
   }
+
+  def wordPattern(pattern: String, s: String): Boolean = {
+    val allWords = s.split(" ")
+
+    @tailrec
+    def rec(curIndex: Int, map: Map[Char, String], visited: Set[String]): Boolean = {
+      if (curIndex == pattern.length) true
+      else {
+        val nextPattern = pattern(curIndex)
+        val nextWordToCheck = allWords(curIndex)
+
+        if (map.contains(nextPattern)) {
+          if (map(nextPattern) == nextWordToCheck) rec(curIndex + 1, map, visited)
+          else false
+        }
+        else if (visited(nextWordToCheck)) false
+        else rec(curIndex, map + (nextPattern -> nextWordToCheck), visited + nextWordToCheck)
+      }
+    }
+
+    if (pattern.length != allWords.length) false
+    else rec(0, Map.empty, Set.empty)
+  }
 }
