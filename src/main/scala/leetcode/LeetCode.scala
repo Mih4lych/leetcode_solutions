@@ -1474,4 +1474,8 @@ object LeetCode extends App {
     if (pattern.length != allWords.length) false
     else rec(0, Map.empty, Set.empty)
   }
+
+  def detectCapitalUse(word: String): Boolean = {
+    word.matches("""[A-Z]*|.[a-z]*""")
+  }
 }
