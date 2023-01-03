@@ -1,6 +1,6 @@
 package learning.cats
 
-import cats.Monad
+import cats.{Eval, Monad}
 import cats.instances.list._
 import cats.instances.either._
 import cats.syntax.functor._
@@ -19,4 +19,14 @@ object CatsPlayground extends App {
       case Right(value) => s"right with $value"
     }
   )
+
+  val testEval = Eval.now {
+    println("asd")
+    42
+  }.map { _ =>
+    println("asddd")
+    59
+  }
+
+  //println(testEval.value)
 }
