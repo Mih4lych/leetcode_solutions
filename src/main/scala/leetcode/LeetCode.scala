@@ -1478,4 +1478,21 @@ object LeetCode extends App {
   def detectCapitalUse(word: String): Boolean = {
     word.matches("""[A-Z]*|.[a-z]*""")
   }
+
+  def minDeletionSize(strs: Array[String]): Int = {
+    val stringLength = strs(0).length
+
+    @tailrec
+    def rec(index: Int, countToDel: Int): Int = {
+      if (index == stringLength) countToDel
+      else {
+        val stringToCheck = strs.map(_(index)).mkString
+
+        if (stringToCheck == stringToCheck.sorted) rec(index + 1, countToDel)
+        else rec(index + 1, countToDel + 1)
+      }
+    }
+
+    rec(0, 0)
+  }
 }
