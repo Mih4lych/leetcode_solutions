@@ -5,7 +5,7 @@ import cats.instances.vector._
 
 import scala.annotation.tailrec
 
-object CatExWriter extends App {
+object CatsExWriter extends App {
   //rewrite it
   def countAndSay(n: Int): Unit = {
     if (n <= 0) println("starting!")
