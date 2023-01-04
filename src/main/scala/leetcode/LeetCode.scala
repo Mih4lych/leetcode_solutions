@@ -1495,4 +1495,21 @@ object LeetCode extends App {
 
     rec(0, 0)
   }
+
+  def minimumRounds(tasks: Array[Int]): Int = {
+    val counts = tasks.groupMapReduce(identity)(_ => 1)(_ + _).values.toList
+
+    @tailrec
+    def rec(remList: List[Int], acc: Int): Int = {
+      remList match {
+        case h :: t =>
+          if (h == 1) -1
+          else if (h % 3 == 0) rec(t, acc + h / 3)
+          else rec(t, acc + h / 3 + 1)
+        case Nil => acc
+      }
+    }
+
+    rec(counts, 0)
+  }
 }
