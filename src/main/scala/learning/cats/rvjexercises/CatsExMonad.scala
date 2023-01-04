@@ -179,6 +179,7 @@ object CatsExMonad extends App {
 
   object Tree {
     def leaf[A](value: A): Leaf[A] = Leaf(value)
+
     def branch[A](left: Tree[A], right: Tree[A]): Branch[A] = Branch(left, right)
   }
 
@@ -199,7 +200,7 @@ object CatsExMonad extends App {
         else {
           todo.head match {
             case Leaf(value) => tailRecFlatMap(todo.tail, expanded, f(value) :: done)
-            case node @ Branch(left, right) =>
+            case node@Branch(left, right) =>
               if (expanded.isEmpty || expanded.head != node) {
                 tailRecFlatMap(left :: right :: todo, node :: expanded, done)
               }
@@ -231,11 +232,11 @@ object CatsExMonad extends App {
           todo.head match {
             case Leaf(Left(value)) => tailRec(f(value) :: todo.tail, expanded, done)
             case Leaf(Right(b)) => tailRec(todo.tail, expanded, Tree.leaf(b) :: done)
-            case node @ Branch(left, right) =>
+            case node@Branch(left, right) =>
               if (expanded.isEmpty || expanded.head != node) {
                 tailRec(left :: right :: todo, node :: expanded, done)
               }
-          else {
+              else {
                 val newLeft = done.head
                 val newRight = done.tail.head
                 val newBranch = Tree.branch(newLeft, newRight)
