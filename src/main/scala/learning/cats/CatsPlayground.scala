@@ -1,6 +1,7 @@
 package learning.cats
 
-import cats.{Eval, Monad}
+import cats.data.Validated
+import cats.{Eval, Monad, Semigroupal}
 import cats.instances.list._
 import cats.instances.either._
 import cats.syntax.functor._
@@ -29,4 +30,11 @@ object CatsPlayground extends App {
   }
 
   //println(testEval.value)
+  type ErrorOr[A] = Validated[Int, A]
+  val testSemigroupal = Semigroupal[ErrorOr].product(
+    Validated.invalid(10),
+    Validated.invalid(20)
+  )
+
+  println(testSemigroupal)
 }
