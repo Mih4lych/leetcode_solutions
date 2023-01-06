@@ -1536,4 +1536,16 @@ object LeetCode extends App {
 
     rec(1, sortedPoints(0)(0), sortedPoints(0)(1), 1)
   }
+
+  def maxIceCream(costs: Array[Int], coins: Int): Int = {
+    val sortedCosts = costs.sorted
+
+    @tailrec
+    def rec(curIndex: Int, curCoinsAmount: Int): Int = {
+      if (curIndex == costs.length || sortedCosts(curIndex) > curCoinsAmount) curIndex
+      else rec(curIndex + 1, curCoinsAmount - sortedCosts(curIndex))
+    }
+
+    rec(0, coins)
+  }
 }
