@@ -1512,4 +1512,28 @@ object LeetCode extends App {
 
     rec(counts, 0)
   }
+
+  def findMinArrowShots(points: Array[Array[Int]]): Int = {
+    val sortedPoints = points.sortBy(_(0))
+
+    @tailrec
+    def rec(curIndex: Int, mutualStarZone: Int, mutualEndZone: Int, arrowCounter: Int): Int = {
+      if (curIndex == points.length) arrowCounter
+      else {
+        val (checkStart, checkEnd) = (sortedPoints(curIndex)(0), sortedPoints(curIndex)(1))
+
+        if (checkStart <= mutualEndZone) {
+          val newStartZone = if (checkStart > mutualStarZone) checkStart else mutualStarZone
+          val newEndZone = if (checkEnd < mutualEndZone) checkEnd else mutualEndZone
+
+          rec(curIndex + 1, newStartZone, newEndZone, arrowCounter)
+        }
+        else {
+          rec(curIndex + 1, checkStart, checkEnd, arrowCounter + 1)
+        }
+      }
+    }
+
+    rec(1, sortedPoints(0)(0), sortedPoints(0)(1), 1)
+  }
 }

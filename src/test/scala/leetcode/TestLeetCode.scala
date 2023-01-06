@@ -189,4 +189,9 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.minStoneSum(Array(4095,8029,4573,8161,8206,8445,5799,7450,7554), 10) == 29044)
     println("pass minStoneSum test")
   }
+
+  test("Test findMinArrowShots") {
+    assert(LeetCode.findMinArrowShots(Array(Array(10,16),Array(2,8),Array(1,6),Array(7,12))) == 2)
+    println("pass findMinArrowShots test")
+  }
 }
