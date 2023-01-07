@@ -194,4 +194,9 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.findMinArrowShots(Array(Array(10,16),Array(2,8),Array(1,6),Array(7,12))) == 2)
     println("pass findMinArrowShots test")
   }
+
+  test("Test canCompleteCircuit") {
+    assert(LeetCode.canCompleteCircuit(Array(1,2,3,4,5),Array(3,4,5,1,2)) == 3)
+    println("pass canCompleteCircuit test")
+  }
 }

@@ -1548,4 +1548,19 @@ object LeetCode extends App {
 
     rec(0, coins)
   }
+
+  def canCompleteCircuit(gas: Array[Int], cost: Array[Int]): Int = {
+    val (total, _ , start) = gas.zip(cost).map(pair => pair._1 - pair._2).zipWithIndex.foldLeft((0, 0, 0)){
+      case ((totalRemGas, curRemGas, start), (gasDiff, index)) =>
+        if (curRemGas < 0) {
+          (totalRemGas + gasDiff, gasDiff, index)
+        }
+        else {
+          (totalRemGas + gasDiff, curRemGas + gasDiff, start)
+        }
+    }
+
+    if (total < 0) -1
+    else start
+  }
 }
