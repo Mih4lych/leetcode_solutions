@@ -1563,4 +1563,19 @@ object LeetCode extends App {
     if (total < 0) -1
     else start
   }
+
+  def preorderTraversal(root: TreeNode): List[Int] = {
+    @tailrec
+    def rec(stack: List[TreeNode], acc: List[Int]): List[Int] = {
+      stack match {
+        case h :: t =>
+          if (h != null) rec(h.left :: h.right :: t, h.value :: acc)
+          else rec(t, acc)
+        case Nil =>
+          acc.reverse
+      }
+    }
+
+    rec(List(root), List.empty)
+  }
 }
