@@ -1578,4 +1578,30 @@ object LeetCode extends App {
 
     rec(List(root), List.empty)
   }
+
+  def isSameTree(p: TreeNode, q: TreeNode): Boolean = {
+    @tailrec
+    def rec(stackP: List[TreeNode], stackQ: List[TreeNode]): Boolean = {
+      (stackP, stackQ) match {
+        case (Nil, Nil) => true
+        case (_, Nil) | (Nil, _) => false
+        case (ph :: pt, qh :: qt) =>
+          if (isEqualValues(ph, qh)) rec(getNewStack(ph, pt), getNewStack(qh, qt))
+          else false
+      }
+    }
+
+    def isEqualValues(pNode: TreeNode, qNode: TreeNode): Boolean = {
+      (Option(pNode), Option(qNode)) match {
+        case (None, None) => true
+        case (None, _) | (_, None) => false
+        case _ => pNode.value == qNode.value
+      }
+    }
+
+    def getNewStack(node: TreeNode, stack: List[TreeNode]): List[TreeNode] =
+      if (node != null) node.left :: node.right :: stack else stack
+
+    rec(List(p), List(q))
+  }
 }
