@@ -1599,8 +1599,12 @@ object LeetCode extends App {
       }
     }
 
-    def getNewStack(node: TreeNode, stack: List[TreeNode]): List[TreeNode] =
-      if (node != null) node.left :: node.right :: stack else stack
+    def getNewStack(node: TreeNode, stack: List[TreeNode]): List[TreeNode] = {
+      Option(node) match {
+        case Some(value) => value.left :: value.right :: stack
+        case None => stack
+      }
+    }
 
     rec(List(p), List(q))
   }
