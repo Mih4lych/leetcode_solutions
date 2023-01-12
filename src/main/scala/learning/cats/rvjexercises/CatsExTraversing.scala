@@ -1,6 +1,6 @@
 package learning.cats.rvjexercises
 
-import cats.{Applicative, Monad}
+import cats.{Applicative, Foldable, Monad}
 import cats.syntax.applicative._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -32,5 +32,16 @@ object CatsExTraversing extends App {
 
   def listSequence[F[_] : Applicative, A](list: List[F[A]]): F[List[A]] = {
     listTraverse(list)(identity)
+  }
+
+  trait MyTraversing[L[_]] extends Foldable[L] {
+    def traverse[F[_] : Applicative, A, B](container: L[A])(func: A => F[B]): F[L[B]]
+    def sequence[F[_] : Applicative, A](container: L[F[A]]): F[L[A]] =
+      traverse(container)(identity)
+
+    type Identity[T] = T
+    def map[A, B](container: L[A])(func: A => B): L[B] = {
+      traverse[Identity, A, B](container)(func)
+    }
   }
 }
