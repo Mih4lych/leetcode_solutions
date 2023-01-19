@@ -1608,4 +1608,36 @@ object LeetCode extends App {
 
     rec(List(p), List(q))
   }
+
+  def minFlipsMonoIncr(s: String): Int = {
+    s.dropWhile(_ == '0').foldLeft((0, 0)) { case ((num, acc), nextChar)  =>
+       if (nextChar == '0') (num, num.min(acc + 1))
+       else (num + 1, acc)
+    }._2
+  }
+
+  def subarraysDivByK(nums: Array[Int], k: Int): Int = {
+    @tailrec
+    def rec(leftIndex: Int, rightIndex: Int, curSum: Int, res: Int): Int = {
+      if (leftIndex == nums.length) res
+      else if (rightIndex == nums.length) rec(leftIndex + 1, leftIndex + 1, 0, res)
+      else {
+        val newSum = curSum + nums(rightIndex)
+        if (newSum % k == 0) rec(leftIndex, rightIndex + 1, newSum, res + 1)
+        else rec(leftIndex, rightIndex + 1, newSum, res)
+      }
+    }
+
+    rec(0, 0, 0, 0)
+  }
+
+  def anotherSubarraysDivByK(nums: Array[Int], k: Int): Int = {
+    nums.foldLeft((Array.fill(k)(0).updated(0, 1), 0, 0)) {
+      case ((modules, curMod, res), nextNum) =>
+        val newMod = (curMod + nextNum % k + k) % k
+        val newRes = res + modules(newMod)
+        modules(newMod) += 1
+        (modules, newMod, newRes)
+    }._3
+  }
 }
