@@ -9,7 +9,7 @@ import cats.syntax.functor._
 import java.util.concurrent.Executors
 import scala.concurrent.{ExecutionContext, Future}
 
-object EighthChapterTestingAsynch extends App {
+object Chapter8TestingAsynch extends App {
   implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(8))
 
   trait UptimeClient[F[_]] {

@@ -1,6 +1,6 @@
 package learning.cats.bookexercises
 
-object CatsExSecondCh extends App {
+object Chapter2MonoindsSemigroups extends App {
   object MonoidRealisation {
     trait Semigroup[A] {
       def combine(x: A, y: A): A

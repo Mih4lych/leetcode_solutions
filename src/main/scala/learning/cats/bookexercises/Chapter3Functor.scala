@@ -1,6 +1,6 @@
 package learning.cats.bookexercises
 
-object ThirdChapterFunctor extends App {
+object Chapter3Functor extends App {
   trait Printable[A] { self =>
     def format(value: A): String
 

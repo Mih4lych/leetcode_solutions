@@ -7,7 +7,7 @@ import cats.instances.int._
 import cats.instances.string._
 import cats.instances.option._
 
-object CatsExFromFirstCh {
+object Chapter1Intro {
   trait Printable[A] {
     def format(value: A): String
   }

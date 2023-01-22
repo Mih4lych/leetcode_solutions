@@ -3,7 +3,7 @@ package learning.cats.bookexercises
 import cats.Monoid
 import cats.syntax.semigroup._
 
-object SeventhChapterFoldTraverse extends App {
+object Chapter7FoldTraverse extends App {
   def mapForList[A, B](list: List[A])(f: A => B): List[B] = {
     list.foldRight(List.empty[B])((a, acc) => f(a) :: acc)
   }

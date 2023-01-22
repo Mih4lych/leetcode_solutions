@@ -5,7 +5,7 @@ import cats.syntax.applicative._
 
 import scala.util.{Failure, Success, Try}
 
-object FourthChapterState extends App {
+object Chapter4State extends App {
   type CalcState[A] = State[List[Int], A]
 
   def evalOne(sym: String): CalcState[Int] =

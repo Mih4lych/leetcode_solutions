@@ -9,7 +9,7 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-object FifthChapterMonadT extends App {
+object Chapter5MonadT extends App {
   type Response[A] = EitherT[Future, String, A]
 
   implicit val context: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(8))
