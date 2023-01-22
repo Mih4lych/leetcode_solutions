@@ -1,4 +1,4 @@
-package learning.ziorvj
+package learning.zio.ziorvj
 
 import scala.util.{Failure, Success, Try}
 import zio._

@@ -1,6 +1,6 @@
-package learning.ziorvj
+package learning.zio.ziorvj
 
-import learning.ziorvj.utils._
+import learning.zio.ziorvj.utils._
 import zio._
 
 object ZIOEx12 extends ZIOAppDefault {

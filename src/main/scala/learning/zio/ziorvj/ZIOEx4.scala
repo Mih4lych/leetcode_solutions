@@ -1,4 +1,4 @@
-package learning.ziorvj
+package learning.zio.ziorvj
 
 import java.io.IOException
 import zio._

@@ -1,4 +1,4 @@
-package learning.ziorvj
+package learning.zio.ziorvj
 
 import zio._
 
@@ -19,7 +19,7 @@ object ZIOEx8 extends ZIOAppDefault {
     if (scanner.hasNextLine) {
       ZIO.succeed(println(scanner.nextLine())) *> ZIO.sleep(100.millis) *> readLineByLine(scanner)
     }
-    else {
+    else {K
       ZIO.unit
     }
 

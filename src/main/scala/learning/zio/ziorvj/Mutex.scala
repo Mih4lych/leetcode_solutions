@@ -1,4 +1,4 @@
-package learning.ziorvj
+package learning.zio.ziorvj
 
 import sun.misc.Signal
 import zio._
