@@ -19,7 +19,7 @@ object ZIOEx8 extends ZIOAppDefault {
     if (scanner.hasNextLine) {
       ZIO.succeed(println(scanner.nextLine())) *> ZIO.sleep(100.millis) *> readLineByLine(scanner)
     }
-    else {K
+    else {
       ZIO.unit
     }
 
