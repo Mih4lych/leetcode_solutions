@@ -1640,4 +1640,36 @@ object LeetCode extends App {
         (modules, newMod, newRes)
     }._3
   }
+
+  def findJudge(n: Int, trust: Array[Array[Int]]): Int = {
+    val (trustCount, trusting) =
+      trust.foldLeft((Array.fill(n)(0), Array.fill(n)(false))) { case ((curCount, curTrusting), trusting) =>
+        curCount(trusting(1) - 1) += 1
+        curTrusting(trusting(0) - 1) = true
+        (curCount, curTrusting)
+      }
+
+    trustCount
+      .zip(trusting)
+      .zipWithIndex
+      .find{ case ((count, trusting), _) => count == n - 1 && !trusting} match {
+      case Some((_, index)) => index + 1
+      case None => -1
+    }
+  }
+
+  def findJudge2(n: Int, trust: Array[Array[Int]]): Int = {
+    trust
+      .foldLeft(Array.fill(n)(0)) { (acc, trusting) =>
+        acc(trusting(0) - 1) -= 1
+        acc(trusting(1) - 1) += 1
+
+        acc
+      }
+      .zipWithIndex
+      .find(_._1 == n -1) match {
+      case Some((_, index)) => index + 1
+      case None => -1
+    }
+  }
 }
