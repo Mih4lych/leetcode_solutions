@@ -1653,9 +1653,9 @@ object LeetCode extends App {
       .zip(trusting)
       .zipWithIndex
       .find{ case ((count, trusting), _) => count == n - 1 && !trusting} match {
-      case Some((_, index)) => index + 1
-      case None => -1
-    }
+        case Some((_, index)) => index + 1
+        case None => -1
+      }
   }
 
   def findJudge2(n: Int, trust: Array[Array[Int]]): Int = {
@@ -1667,9 +1667,9 @@ object LeetCode extends App {
         acc
       }
       .zipWithIndex
-      .find(_._1 == n -1) match {
-      case Some((_, index)) => index + 1
-      case None => -1
-    }
+      .find(_._1 == n - 1) match {
+        case Some((_, index)) => index + 1
+        case None => -1
+      }
   }
 }
