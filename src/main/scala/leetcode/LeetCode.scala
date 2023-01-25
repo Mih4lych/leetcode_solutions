@@ -1667,9 +1667,27 @@ object LeetCode extends App {
         acc
       }
       .zipWithIndex
-      .find(_._1 == n -1) match {
+      .find(_._1 == n - 1) match {
       case Some((_, index)) => index + 1
       case None => -1
     }
+  }
+
+  def closestMeetingNode(edges: Array[Int], node1: Int, node2: Int): Int = {
+    def rec(nextNode: Int, curDist: Int, acc: Array[Int], visited: Array[Boolean]): Array[Int] = {
+      if (edges(nextNode) == -1 || visited(nextNode)) acc
+      else rec(edges(nextNode), curDist + 1, acc.updated(nextNode, curDist), visited.updated(nextNode, true))
+    }
+
+    val test1 = rec(node1, 0, Array.fill(edges.length)(Int.MaxValue).updated(node1, 0), Array.fill(edges.length)(false))
+    val test2 = rec(node2, 0, Array.fill(edges.length)(Int.MaxValue).updated(node2, 0), Array.fill(edges.length)(false))
+
+    rec(node1, 0, Array.fill(edges.length)(Int.MaxValue).updated(node1, 0), Array.fill(edges.length)(false))
+      .zip(rec(node2, 0, Array.fill(edges.length)(Int.MaxValue).updated(node2, 0), Array.fill(edges.length)(false)))
+      .zipWithIndex
+      .foldLeft((-1, Int.MaxValue)) { case ((minIndex, minDist), ((dist1, dist2), curInd)) =>
+        if (minDist > dist1.max(dist2)) (curInd, dist1.max(dist2))
+        else (minIndex, minDist)
+      }._1
   }
 }
