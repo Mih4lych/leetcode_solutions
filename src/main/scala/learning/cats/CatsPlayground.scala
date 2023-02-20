@@ -1,7 +1,6 @@
 package learning.cats
 
 import cats.data._
-import cats.implicits.catsSyntaxTuple2Semigroupal
 import cats.{Alternative, Applicative, ApplicativeError, Bifoldable, Contravariant, ContravariantMonoidal, Eval, Foldable, FunctorFilter, Monad, MonadError, Monoid, Order, PartialOrder, Semigroupal, Traverse}
 import cats.instances.list._
 import cats.instances.either._
@@ -14,8 +13,10 @@ import cats.syntax.order._
 import cats.syntax.parallel._
 import cats.syntax.functor._
 import cats.syntax.semigroupal._
+import cats.syntax.validated._
 
 import scala.util.Try
+
 object CatsPlayground extends App {
   val list = List(1, 2, 3, 5)
 
@@ -187,7 +188,6 @@ object CatsPlayground extends App {
   println(testState.runS(10).value)
   println(State.pure[Int, Int](10).run(10).value)
 
-  println((List(1, 2), List(2, 3)).tupled)
   println((List(1, 2), List(2, 3)).parTupled)
 
   println(List(Either.right(42), Either.left(NonEmptyList.one("Error 1")), Either.left(NonEmptyList.one("Error 2"))).parSequence)
@@ -195,4 +195,39 @@ object CatsPlayground extends App {
 
   println(List(1, 2, 3).combineAll)
 
+  /*type AllErrorsOr[A] = ValidatedNec[ValidationError, A]
+
+  sealed trait ValidationError
+  object ValidationError {
+
+    /** Payment card number contains less than 8 or more than 19 characters. */
+    final case object NumberIsOutOfRange extends ValidationError
+
+    /** Payment card number contains characters other than digits. */
+    final case object NumberContainsInvalidCharacters extends ValidationError
+
+    /** Payment card number starts with 0. */
+    final case object NumberStartsWithZero extends ValidationError
+  }
+
+  import ValidationError._
+  /** Payment card number. */
+  final case class Number(value: String) extends AnyVal
+  object Number {
+
+    /** Constructs [[Number]] from the string.
+     * <p/>
+     * The string must contain between 8 and 19 digits (inclusive) and must not start with 0.
+     */
+    def fromString(s: String): AllErrorsOr[Number] =
+      (Validated.condNec(s.forall(_.isDigit), (), NumberContainsInvalidCharacters) && Validated.condNec(!s.startsWith("0"), (), NumberStartsWithZero))
+        .combine(Validated.condNec((8 to 19).contains(s.length), (), NumberIsOutOfRange))
+        .map(_ => Number(s))
+  }*/
+
+  println("asasd".valid[Int].combine("asasd".valid[Int]).show)
+
+  case class Car(manufacturer: String)
+
+  List.empty[Car].sortBy(_.manufacturer)(Ordering[String])
 }
