@@ -6,7 +6,7 @@ abstract class MyList[+A] {
   def isEmpty: Boolean
   def add[B >: A](value: B): MyList[B]
   def printElements: String
-  override def toString(): String = s"[$printElements]"
+  override def toString: String = s"[$printElements]"
   def map[B](transformer: MyTransformer[A, B]): MyList[B]
   def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B]
   def filter(predicate: MyPredicate[A]): MyList[A]
@@ -33,13 +33,13 @@ final case class Cons[A](private val h: A, private val t: MyList[A]) extends MyL
   def printElements: String =
     if (t.isEmpty) h.toString
     else s"$h, ${t.printElements}"
-  override def map[B](transformer: MyTransformer[A, B]): MyList[B] = {
+  def map[B](transformer: MyTransformer[A, B]): MyList[B] = {
     Cons(transformer.transform(head), t.map(transformer))
   }
   def ++[B >: A](otherList: MyList[B]): MyList[B] = Cons(h, t ++ otherList)
-  override def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B] =
+  def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B] =
     transformer.transform(h) ++ t.flatMap(transformer)
-  override def filter(predicate: MyPredicate[A]): MyList[A] = {
+  def filter(predicate: MyPredicate[A]): MyList[A] = {
     if (predicate.test(h)) Cons(h, t.filter(predicate)) else t.filter(predicate)
   }
 }
