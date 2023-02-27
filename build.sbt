@@ -18,6 +18,9 @@ libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "2.7.0",
 )
+libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-effect" % "3.2.0",
+)
 
 scalacOptions ++= Seq(
   "-language:higherKinds"
