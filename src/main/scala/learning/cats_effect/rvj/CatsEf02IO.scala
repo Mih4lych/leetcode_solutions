@@ -22,7 +22,10 @@ object CatsEf02IO extends App {
 
   def sumIO(n: Int): IO[Int] = {
     if (n <= 0) IO.pure(0)
-    else IO.pure(n).flatMap(left => sumIO(n - 1).map(_ + left))
+    else for {
+      cur <- IO(n)
+      prev <- sumIO(n - 1)
+    } yield cur + prev
   }
 
   def fibonacci(n: Int): IO[BigInt] = {
