@@ -1,7 +1,7 @@
 package learning.cats_effect.essentialEffects
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{DurationLong, FiniteDuration}
 
 object Task01Timing extends App {
   case class MyIO[A](unsafeRun: () => A) {
@@ -25,7 +25,7 @@ object Task01Timing extends App {
       begin <- clock
       a <- action
       end <- clock
-    } yield (FiniteDuration(end - begin, TimeUnit.MILLISECONDS), a)
+    } yield ((end - begin).millisecond, a)
 
   val timedHello = Task01Timing.time(MyIO.putStr("hello"))
   timedHello.unsafeRun() match {
