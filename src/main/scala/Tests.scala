@@ -1,4 +1,6 @@
-object Tests extends App{
+import scala.annotation.tailrec
+
+object Tests extends App {
   def compose[A, B, C]
   (g: B => C, f: A => B): A => C = a => g(f(a))
 
@@ -10,6 +12,7 @@ object Tests extends App{
     }
   }
 
+  @tailrec
   def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = {
     xs match {
       case Nil => true
@@ -55,6 +58,7 @@ object Tests extends App{
 
   import scala.util.chaining._
   def multi3(list: List[Int]): List[Int] = list.map(_ * 3)
+  @tailrec
   def max(list: List[Int]): Int = max(list)
   List(1, 2, 3).pipe(multi3).pipe(max).pipe(_ * 3)
 }
