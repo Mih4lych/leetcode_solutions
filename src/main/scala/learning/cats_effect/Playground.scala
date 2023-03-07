@@ -1,6 +1,7 @@
 package learning.cats_effect
 
 import cats.effect.{IO, IOApp}
+import cats.syntax.parallel._
 
 object Playground extends IOApp.Simple {
   override def run: IO[Unit] = {

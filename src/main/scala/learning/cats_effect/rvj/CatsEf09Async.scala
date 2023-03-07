@@ -6,7 +6,7 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class CatsEf09Async extends IOApp.Simple {
+object CatsEf09Async extends IOApp.Simple {
   val threadPool: ExecutorService = Executors.newFixedThreadPool(8)
   implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(threadPool)
 
