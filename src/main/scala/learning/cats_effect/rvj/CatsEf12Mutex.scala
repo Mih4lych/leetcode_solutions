@@ -22,13 +22,7 @@ object CatsEf12Mutex {
 
     def create: IO[Mutex] = Ref[IO].of(unlocked).map(createMutexWithCancellation)
 
-    def createMutexWithCancellation(state: Ref[IO, State]): Mutex =
-      new Mutex {
-        override def acquire: IO[Unit] = ???
-
-        override def release: IO[Unit] = ???
-      }
-    def createSimpleMutex(state: Ref[IO, State]): Mutex = new Mutex {
+    def createMutexWithCancellation(state: Ref[IO, State]): Mutex = new Mutex {
       /*
         Change the state of the Ref:
         - if the mutex is currently unlocked, state becomes (true, [])
