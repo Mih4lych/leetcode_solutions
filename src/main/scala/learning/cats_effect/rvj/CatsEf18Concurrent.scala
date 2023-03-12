@@ -104,7 +104,7 @@ object CatsEf18Concurrent extends IOApp.Simple {
     def create[F[_]: Concurrent]: F[MutexGeneral[F]] = Ref[F].of(unlocked[F]).map(state => createMutexWithCancellation(state))
 
     def createMutexWithCancellation[F[_]](state: Ref[F, State[F]])(implicit concurrent: Concurrent[F]): MutexGeneral[F] =
-      new MutexGeneral {
+      new MutexGeneral[F] {
         override def acquire: F[Unit] = concurrent.uncancelable { poll =>
           createSignal().flatMap { signal =>
 
