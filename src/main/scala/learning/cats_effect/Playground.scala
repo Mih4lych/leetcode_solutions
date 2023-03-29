@@ -27,6 +27,7 @@ object Playground extends IOApp.Simple {
     } yield ref).value
   }
 
+
   override def run: IO[Unit] = test1.value.void
 
 }
