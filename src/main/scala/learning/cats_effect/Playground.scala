@@ -4,7 +4,13 @@ import cats.data.OptionT
 import cats.syntax.apply._
 import cats.syntax.option._
 import cats.effect.{IO, IOApp, Ref}
+import cats.syntax.applicative._
 import cats.syntax.parallel._
+import learning.cats_effect.utils.general.DebugWrapper
+
+import java.io.{File, FileReader, FileWriter}
+import java.util.Scanner
+import scala.io.StdIn
 
 object Playground extends IOApp.Simple {
   val testOnError = IO
@@ -28,6 +34,16 @@ object Playground extends IOApp.Simple {
   }
 
 
-  override def run: IO[Unit] = test1.value.void
+  val testRef = Ref[IO].of(1).flatMap (_.modify(i => i + 1 -> i).replicateA(3)).debug
 
+  override def run: IO[Unit] = testRef.void
+
+  StdIn.readLine().split(" ").map(_.toInt).sum
+
+  val writer = new FileWriter(new File("input.txt"))
+  val reader = new Scanner(new FileReader(new File("input.txt")))
+
+  writer.write(reader.nextLine().split(" ").map(_.toInt).sum)
+  writer.close()
+  reader.close()
 }
