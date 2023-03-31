@@ -27,6 +27,15 @@ class Task04 {
 
   def evalEvery[A](t: FiniteDuration)(ef: IO[A]): Stream[IO, A] = {
     Stream.sleep_[IO](t) ++ Stream.eval(ef) ++ evalEvery(t)(ef)
+  }
 
+  implicit class ReachStream[A](s: Stream[IO, A]) {
+    def flatAttempt: Stream[IO, A] = {
+      s
+        .attempt
+        .collect {
+          case Right(value) => value
+        }
+    }
   }
 }
