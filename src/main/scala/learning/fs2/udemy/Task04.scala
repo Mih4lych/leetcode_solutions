@@ -3,7 +3,8 @@ package learning.fs2.udemy
 import cats.effect.IO
 import fs2._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import scala.util.Random
 
 class Task04 {
   val data = List.range(1, 100)
@@ -38,4 +39,31 @@ class Task04 {
         }
     }
   }
+
+  def doEffectFailing[A](ef: IO[A]): IO[A] = {
+    IO(math.random()).flatMap { flag =>
+      if (flag < 0.5) IO.println("Failing") *> IO.raiseError(new Exception("boom"))
+      else IO.println("Successful") *> ef
+    }
+  }
+
+  val searches = Stream.iterateEval("")(s => IO(Random.nextPrintableChar()).map(s + _))
+  def performSearch(text: String): IO[Unit] = doEffectFailing(IO.println(s"Try to find text: $text"))
+
+  def performSearchRetrying(text: String): Stream[IO, Unit] =
+    Stream.retry(
+      performSearch(text),
+      1.second,
+      _ + 1.second,
+      5
+    )
+
+  searches
+    .metered(200.millis)
+    .debounce(500.millis)
+    .flatMap(performSearchRetrying)
+    .interruptAfter(5.second)
+    .compile
+
+
 }
