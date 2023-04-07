@@ -1,12 +1,12 @@
 package learning.fs2.udemy
 
-import cats.effect.IO
+import cats.effect.{IO, IOApp}
 import fs2._
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.util.Random
 
-class Task04 {
+object Task04 extends IOApp.Simple {
   val data = List.range(1, 100)
   val pageSize = 20
 
@@ -65,5 +65,12 @@ class Task04 {
     .interruptAfter(5.second)
     .compile
 
-
+  override def run: IO[Unit] =
+    Stream
+      .iterateEval(0)(cur => IO.println(cur) *> IO(cur + 1))
+      .metered(200.millis)
+      .debounce(100.millis)
+      .interruptAfter(5.second)
+      .compile
+      .drain
 }
