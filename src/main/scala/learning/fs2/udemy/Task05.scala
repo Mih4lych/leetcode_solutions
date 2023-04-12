@@ -1,10 +1,12 @@
 package learning.fs2.udemy
 
+import cats.effect.std.Queue
 import cats.effect.{IO, IOApp, Ref}
 import fs2._
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.reflect.ClassTag
+import scala.util.Random
 
 object Task05 extends IOApp.Simple {
   def compact[A : ClassTag](c: Chunk[A]): Chunk[A] = {
@@ -48,6 +50,43 @@ object Task05 extends IOApp.Simple {
       }
     }
   }
+
+  def fetchRandomQuoteFromSource1: IO[String] = IO(Random.nextString(5))
+
+  def fetchRandomQuoteFromSource2: IO[String] = IO(Random.nextString(25))
+
+  //ex1
+  val test =
+    Stream.repeatEval(fetchRandomQuoteFromSource1).take(100)
+      .merge(Stream.repeatEval(fetchRandomQuoteFromSource2).take(150))
+      .interruptAfter(5.second)
+      .compile
+      .toList
+      .flatMap(IO.println)
+
+  //ex2
+  def producer(id: Int, queue: Queue[IO, Int]): Stream[IO, Nothing] = {
+    Stream.repeatEval(queue.offer(id)).drain
+  }
+
+  def consumer(id: Int, queue: Queue[IO, Int]): Stream[IO, Nothing] = {
+    Stream.repeatEval(queue.take).map(i => s"Consumer $id consumes $i").printlns
+  }
+
+  val ex2 =
+    Stream.eval(Queue.unbounded[IO, Int]).flatMap { queue =>
+      val producers =
+        Stream
+          .range(0, 5)
+          .map(id => producer(id, queue))
+
+      val consumers =
+        Stream
+          .range(0, 10)
+          .map(id => consumer(id, queue))
+
+      (producers ++ consumers).parJoinUnbounded
+    }.interruptAfter(5.seconds).compile.drain
 
   //ex4
   val numItems = 30
