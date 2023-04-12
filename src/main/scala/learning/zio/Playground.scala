@@ -1,9 +1,9 @@
-package learning.zio.ziorvj
+package learning.zio
 
 import zio._
-import utils._
+import ziorvj.utils._
 
-object ZIOTests extends ZIOAppDefault {
+object Playground extends ZIOAppDefault {
 
   val zio1 = ZIO.sleep(1.seconds) *> ZIO.succeed("1").map(println)
   val zio2 = ZIO.sleep(1.seconds) *> ZIO.succeed("2").map(println)
