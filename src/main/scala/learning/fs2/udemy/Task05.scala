@@ -1,8 +1,9 @@
 package learning.fs2.udemy
 
-import cats.effect.{IO, IOApp}
+import cats.effect.{IO, IOApp, Ref}
 import fs2._
 
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.reflect.ClassTag
 
 object Task05 extends IOApp.Simple {
@@ -38,7 +39,7 @@ object Task05 extends IOApp.Simple {
     go(s).stream
   }
 
-  def runnigMax: Pipe[Pure, Int, Int] = s => {
+  def runningMax: Pipe[Pure, Int, Int] = s => {
     s.scanChunksOpt(Int.MinValue) { curMax =>
       Some { chunk =>
         val newMax = curMax.max(chunk.foldLeft(Int.MinValue)(_.max(_)))
@@ -48,14 +49,84 @@ object Task05 extends IOApp.Simple {
     }
   }
 
+  //ex4
+  val numItems = 30
+
+  def processor(processedItem: Ref[IO, Int]): Stream[IO, Nothing] = {
+    Stream
+      .repeatEval(processedItem.update(_ + 1))
+      .take(numItems)
+      .metered(100.millis)
+      .drain
+  }
+
+  def progressTracker(processedItem: Ref[IO, Int]): Stream[IO, Nothing] = {
+    Stream
+      .repeatEval(processedItem.get.flatMap(item => IO.println(s"Progress: ${item * 100 / numItems}")))
+      .metered(100.millis)
+      .drain
+  }
+
+  val testConcurrent: IO[Unit] =
+    Stream
+      .eval(Ref.of[IO, Int](0))
+      .flatMap(ref => processor(ref).concurrently(progressTracker(ref)))
+      .compile
+      .drain
+
+  //ex5
+  case class Event(jobId: Long, seqNo: Long)
+
+  sealed trait JobState
+  case object Created extends JobState
+  case object Processed extends JobState
+
+  case class Job(id: Long, state: JobState)
+
+  def processJob(job: Job): IO[Job] = {
+    IO.println(s"start processing ${job.id}") *>
+      IO.sleep(1.second) *>
+      IO.pure(job.copy(state = Processed))
+  }
+
+
+  def processJobS(job: Job): IO[List[Event]] = {
+    IO.println(s"start processing ${job.id}") *>
+      IO.sleep(1.second) *>
+      IO.pure(List.range(1, 10).map(seqNo => Event(jobId = job.id, seqNo = seqNo)))
+  }
+
+  implicit class RichStream[A](s: Stream[IO, A]) {
+    def parEvalMapSeq[B](maxConcurrent: Int)(f: A => IO[List[B]]): Stream[IO, B] =
+      s
+        .parEvalMap(maxConcurrent)(f)
+        .flatMap(Stream.emits)
+    def parEvalMapSeqUnbounded[B](f: A => IO[List[B]]): Stream[IO, B] =
+      s
+        .parEvalMapUnbounded(f)
+        .flatMap(Stream.emits)
+  }
+
+  //ex6
+  def metered[A](s: Stream[IO, A], d: FiniteDuration): Stream[IO, A] = {
+    Stream.fixedRate[IO](d).zipRight(s)
+  }
+
+  //ex7
+  def spaced[A](s: Stream[IO, A], d: FiniteDuration): Stream[IO, A] = {
+    Stream.fixedDelay[IO](d).zipRight(s)
+  }
+
   override def run: IO[Unit] = {
     IO.println(compact(Chunk.singleton(10)))
 
     (Stream(1, 2) ++ Stream(3) ++ Stream(4, 5))
       .through(filter(_ % 2 == 0))
-      .through(runnigMax)
+      .through(runningMax)
       .evalMap(IO.println)
       .compile
       .drain
+
+    testConcurrent
   }
 }
