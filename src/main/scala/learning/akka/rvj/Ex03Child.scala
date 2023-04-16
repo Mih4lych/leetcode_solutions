@@ -10,6 +10,7 @@ object Ex03Child extends App {
     trait Command
     case class CreateChild(name: String) extends Command
     case class TellChild(name: String, msg: String) extends Command
+    case class StopChild(name: String) extends Command
 
     def apply(): Behavior[Command] =  process(Map.empty)
 
@@ -32,6 +33,15 @@ object Ex03Child extends App {
               context.log.info(s"Child $name doesn't exist")
           }
           Behaviors.same
+        case StopChild(name) =>
+          children.get(name) match {
+            case Some(ref) =>
+              context.stop(ref)
+              process(children - name)
+            case None =>
+              context.log.info(s"Child $name doesn't exist")
+              Behaviors.same
+          }
       }
     }
   }
