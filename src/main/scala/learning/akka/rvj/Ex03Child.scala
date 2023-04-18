@@ -1,6 +1,6 @@
 package learning.akka.rvj
 
-import akka.actor.typed.{ActorRef, Behavior, ActorSystem}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Terminated}
 import akka.actor.typed.scaladsl.Behaviors
 
 import scala.collection.mutable
@@ -11,10 +11,11 @@ object Ex03Child extends App {
     case class CreateChild(name: String) extends Command
     case class TellChild(name: String, msg: String) extends Command
     case class StopChild(name: String) extends Command
+    case class WatchChild(name: String) extends Command
 
     def apply(): Behavior[Command] =  process(Map.empty)
 
-    def process(children: Map[String, ActorRef[String]]): Behavior[Command] = Behaviors.receive { (context, command) =>
+    def process(children: Map[String, ActorRef[String]]): Behavior[Command] = Behaviors.receive[Command] { (context, command) =>
       command match {
         case CreateChild(name) =>
           children.get(name) match {
@@ -42,8 +43,21 @@ object Ex03Child extends App {
               context.log.info(s"Child $name doesn't exist")
               Behaviors.same
           }
+        case WatchChild(name) =>
+          children.get(name) match {
+            case Some(ref) =>
+              context.watch(ref)
+            case None =>
+              context.log.info(s"Child $name doesn't exist")
+          }
+          Behaviors.same
       }
     }
+      .receiveSignal {
+        case (context, Terminated(refChild)) =>
+          context.log.info(s"Child ${refChild.path} is dead")
+          Behaviors.same
+      }
   }
 
   object Child {
