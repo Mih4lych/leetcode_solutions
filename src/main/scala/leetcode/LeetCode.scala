@@ -1688,5 +1688,22 @@ object LeetCode extends App {
       }._1
   }
 
+  def merge(nums1: Array[Int], m: Int, nums2: Array[Int], n: Int): Unit = {
+    @tailrec
+    def loop(nums1Index: Int, nums2Index: Int, num1Ending: Int): Unit = {
+      if (nums2Index < 0) ()
+      else if (num1Ending >= 0 && nums1(nums1Index) > nums2(nums2Index)) {
+        nums1(num1Ending) = nums1(nums1Index)
+        loop(nums1Index - 1, nums2Index, num1Ending - 1)
+      }
+      else {
+        nums1(num1Ending) = nums2(nums2Index)
+        loop(nums1Index, nums2Index - 1, num1Ending - 1)
+      }
+    }
+
+    loop(m - 1, n - 1, nums1.length - 1)
+  }
+
   ";;1;;".split(";")
 }

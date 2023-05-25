@@ -205,4 +205,12 @@ class TestLeetCode extends AnyFunSuite {
     assert(LeetCode.closestMeetingNode(Array(1,2,-1), 0, 2) == 2)
     println("pass closestMeetingNode test")
   }
+
+  test("Test merge") {
+    val num1 = Array(1, 2, 3, 0, 0, 0)
+
+    LeetCode.merge(num1, 3, Array(2,5,6), 3)
+
+    assert(num1.sameElements(Array(1, 2, 2, 3, 5, 6)))
+  }
 }
