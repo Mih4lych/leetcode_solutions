@@ -1705,5 +1705,17 @@ object LeetCode extends App {
     loop(m - 1, n - 1, nums1.length - 1)
   }
 
-  ";;1;;".split(";")
+  def removeElement(nums: Array[Int], `val`: Int): Int = {
+    @tailrec
+    def loop(curIndex: Int, newEnding: Int): Int = {
+      if (curIndex == newEnding) newEnding
+      else if (nums(curIndex) != `val`) loop(curIndex + 1, newEnding)
+      else {
+        nums(curIndex) = nums(newEnding - 1)
+        loop(curIndex, newEnding - 1)
+      }
+    }
+
+    loop(0, nums.length)
+  }
 }
