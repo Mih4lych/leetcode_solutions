@@ -1718,4 +1718,32 @@ object LeetCode extends App {
 
     loop(0, nums.length)
   }
+
+  def removeDuplicatesDouble(nums: Array[Int]): Int = {
+    def loop(curIndex: Int, newArrayIndex: Int, duplicates: Int): Int = {
+      if (curIndex >= nums.length) newArrayIndex + 1
+      else if (nums(curIndex) == nums(newArrayIndex)) {
+        if (duplicates == 2) loop(curIndex + 1, newArrayIndex, duplicates)
+        else {
+          nums(newArrayIndex + 1) = nums(curIndex)
+          loop(curIndex + 1, newArrayIndex + 1, duplicates + 1)
+        }
+      }
+      else {
+        nums(newArrayIndex + 1) = nums(curIndex)
+        loop(curIndex + 1, newArrayIndex + 1, 1)
+      }
+    }
+
+    loop(1, 0, 1)
+  }
+
+  def removeDuplicatesSimple(nums: Array[Int]): Int = {
+    nums.foldLeft(0){ (index, num) =>
+      if (index < 2 || num != nums(index - 2)) {
+        nums(index) = num
+        index + 1
+      } else index
+    }
+  }
 }
