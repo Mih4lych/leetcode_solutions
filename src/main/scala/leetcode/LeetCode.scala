@@ -1746,4 +1746,52 @@ object LeetCode extends App {
       } else index
     }
   }
+
+  def uniquePaths(obstacles: Array[Array[Int]], m: Int, n: Int): Int = {
+    def loop(i: Int, j: Int, paths: Array[Array[Int]]): Int = {
+      if (i == m - 1 && j == n) paths(m - 1)(n - 1)
+      else if (j == n) loop(i + 1, 0, paths)
+      else if (obstacles(i)(j) == 1) loop(i, j + 1, paths)
+      else if (i > 0 && j > 0) {
+        paths(i)(j) = paths(i)(j - 1) + paths(i - 1)(j)
+        loop(i, j + 1, paths)
+      }
+      else if (i == 0) {
+        paths(i)(j) = paths(i)(j - 1)
+        loop(i, j + 1, paths)
+      }
+      else {
+        paths(i)(j) = paths(i - 1)(j)
+        loop(i, j + 1, paths)
+      }
+    }
+
+    val path = Array.fill(m, n)(0)
+    path(0)(0) = 1
+    loop(0, 1, path)
+  }
+
+  def climbStairsNew(n: Int): Int = {
+    def loop(first: Int, second: Int, curStep: Int): Int = {
+      if (curStep > n) second
+      else loop(second, first + second, curStep + 1)
+    }
+
+    loop(0, 1, 1)
+  }
+
+  def rob(nums: Array[Int]): Int = {
+    @tailrec
+    def loop(firstPathProfit: Int, secondPathProfit: Int, curIndex: Int): Int = {
+      if (curIndex == nums.length) secondPathProfit
+      else {
+        val newFinalProfit = (firstPathProfit + nums(curIndex)).max(secondPathProfit)
+        loop(secondPathProfit, newFinalProfit, curIndex + 1)
+      }
+    }
+
+    if (nums.length == 1) nums(0)
+    else if (nums.length == 2) nums(0).max(nums(1))
+    else loop(nums(0), nums(0).max(nums(1)), 2)
+  }
 }

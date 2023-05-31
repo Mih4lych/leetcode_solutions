@@ -213,4 +213,13 @@ class TestLeetCode extends AnyFunSuite {
 
     assert(num1.sameElements(Array(1, 2, 2, 3, 5, 6)))
   }
+
+  test("Test uniquePaths") {
+    val obstacles = Array.fill(3, 4)(0)
+    obstacles(1)(1) = 1
+    obstacles(1)(2) = 1
+    obstacles(1)(3) = 1
+
+    assert(LeetCode.uniquePaths(obstacles, 3, 4) == 1)
+  }
 }
