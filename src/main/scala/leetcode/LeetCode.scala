@@ -1720,6 +1720,7 @@ object LeetCode extends App {
   }
 
   def removeDuplicatesDouble(nums: Array[Int]): Int = {
+    @tailrec
     def loop(curIndex: Int, newArrayIndex: Int, duplicates: Int): Int = {
       if (curIndex >= nums.length) newArrayIndex + 1
       else if (nums(curIndex) == nums(newArrayIndex)) {
@@ -1793,5 +1794,22 @@ object LeetCode extends App {
     if (nums.length == 1) nums(0)
     else if (nums.length == 2) nums(0).max(nums(1))
     else loop(nums(0), nums(0).max(nums(1)), 2)
+  }
+
+  def containsDuplicate(nums: Array[Int]): Boolean = {
+    @tailrec
+    def loop(index: Int, setUnique: Set[Int]): Boolean = {
+      if (index == nums.length) false
+      else if (setUnique.contains(nums(index))) true
+      else loop(index + 1, setUnique + nums(index))
+    }
+
+    loop(0, Set.empty[Int])
+  }
+
+  def missingNumber(nums: Array[Int]): Int = {
+    val length = nums.length + 1
+
+    (length * (length - 1)) / 2 - nums.sum
   }
 }
