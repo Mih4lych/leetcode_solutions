@@ -1855,4 +1855,32 @@ object LeetCode extends App {
 
     loop(head, head)
   }
+
+  //[4,3,2,7,8,2,3,1]
+  def findDisappearedNumbers(nums: Array[Int]): List[Int] = {
+    @tailrec
+    def loop(index: Int): List[Int] = {
+      if (index == nums.length) getMissed
+      else {
+        val pos = nums(index)
+
+        if (nums(pos - 1) != pos) {
+          nums(index) = nums(pos - 1)
+          nums(pos - 1) = pos
+
+          loop(index)
+        }
+        else loop(index + 1)
+      }
+    }
+
+    def getMissed: List[Int] =
+      nums.indices.foldLeft(List.empty[Int])((list, nextIndex) => if (nums(nextIndex) != nextIndex + 1) nextIndex + 1 :: list else list).reverse
+
+    loop(0)
+  }
+
+  def climbStairsFold(n: Int): Int = {
+    (0 to n).foldLeft((1, 1)) { case ((firstSolution, secondSolution), _) => (secondSolution, firstSolution + secondSolution) }._2
+  }
 }
