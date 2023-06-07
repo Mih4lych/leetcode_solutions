@@ -925,7 +925,7 @@ object LeetCode extends App {
     recSol(0)
   }
 
-  class ListNode(_x: Int = 0, _next: ListNode = null) {
+  case class ListNode(_x: Int = 0, _next: ListNode = null) {
     var next: ListNode = _next
     var x: Int = _x
   }
@@ -1882,5 +1882,123 @@ object LeetCode extends App {
 
   def climbStairsFold(n: Int): Int = {
     (0 to n).foldLeft((1, 1)) { case ((firstSolution, secondSolution), _) => (secondSolution, firstSolution + secondSolution) }._2
+  }
+
+  def reverseListWithoutCreating(head: ListNode): ListNode = {
+    @tailrec
+    def reverseListRec(curHead: ListNode, acc: ListNode): ListNode = {
+      if (curHead == null) {
+        acc
+      }
+      else {
+        val nextHead = curHead.next
+        curHead.next = acc
+        reverseListRec(nextHead, curHead)
+      }
+    }
+
+    reverseListRec(head, null)
+  }
+
+  def isPalindrome(head: ListNode): Boolean = {
+    def loop(slow: ListNode, fast: ListNode, reversedList: ListNode): Boolean = {
+      if (slow == null) false
+      else if (fast == null) checkPalindrome(reversedList, slow)
+      else if (fast.next == null) checkPalindrome(reversedList, slow.next)
+      else loop(slow.next, fast.next.next, new ListNode(slow.x, reversedList))
+    }
+
+    def checkPalindrome(firstPart: ListNode, secondPart: ListNode): Boolean = {
+      if (firstPart == null) true
+      else if (firstPart.x != secondPart.x) false
+      else checkPalindrome(firstPart.next, secondPart.next)
+    }
+
+    loop(head, head, null)
+  }
+
+  def isPalindromeWithoutCreating(head: ListNode): Boolean = {
+    @tailrec
+    def loop(slow: ListNode, fast: ListNode, reversedList: ListNode): Boolean = {
+      if (slow == null) false
+      else if (fast == null) checkPalindrome(reversedList, slow)
+      else if (fast.next == null) checkPalindrome(reversedList, slow.next)
+      else {
+        val newSlow = slow.next
+        val newFast = fast.next.next
+        slow.next = reversedList
+
+        loop(newSlow, newFast, slow)
+      }
+    }
+
+    @tailrec
+    def checkPalindrome(firstPart: ListNode, secondPart: ListNode): Boolean = {
+      if (firstPart == null) true
+      else if (firstPart.x != secondPart.x) false
+      else checkPalindrome(firstPart.next, secondPart.next)
+    }
+
+    loop(head, head, null)
+  }
+
+  def removeElements(head: ListNode, `val`: Int): ListNode = {
+    @tailrec
+    def loop(curNode: ListNode): Unit = {
+      if (curNode.next == null) ()
+      else if (curNode.next.x == `val`) {
+        curNode.next = curNode.next.next
+
+        loop(curNode)
+      }
+      else {
+        loop(curNode.next)
+      }
+    }
+
+    val newList = new ListNode(0, head)
+
+    loop(newList)
+
+    newList.next
+  }
+
+  def deleteDuplicates(head: ListNode): ListNode = {
+    @tailrec
+    def loop(curNode: ListNode): ListNode = {
+      if (curNode.next == null) head
+      else if (curNode.x == curNode.next.x) {
+        curNode.next = curNode.next.next
+
+        loop(curNode)
+      }
+      else loop(curNode.next)
+    }
+
+    if (head == null) head
+    else loop(head)
+  }
+
+  def mergeTwoListsRec(list1: ListNode, list2: ListNode): ListNode = {
+    @tailrec
+    def loop(curNode1: ListNode, curNode2: ListNode, curNodeResult: ListNode): Unit = {
+      if (curNode1 == null) curNodeResult.next = curNode2
+      else if (curNode2 == null) curNodeResult.next = curNode1
+      else {
+        if (curNode1.x > curNode2.x) {
+          curNodeResult.next = curNode2
+          loop(curNode1, curNode2.next, curNodeResult.next)
+        }
+        else {
+          curNodeResult.next = curNode1
+          loop(curNode1.next, curNode2, curNodeResult.next)
+        }
+      }
+    }
+
+    val result = new ListNode(0, null)
+    loop(list1, list2, result)
+
+    result.next
   }
 }

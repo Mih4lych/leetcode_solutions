@@ -1,5 +1,6 @@
 package leetcode
 
+import LeetCode._
 import org.scalatest.funsuite.AnyFunSuite
 
 class TestLeetCode extends AnyFunSuite {
@@ -226,5 +227,29 @@ class TestLeetCode extends AnyFunSuite {
   test("Test findDisappearedNumbers") {
     val array = Array(4,3,2,7,8,2,3,1)
     assert(LeetCode.findDisappearedNumbers(array).sameElements(Array(5, 6)))
+  }
+
+  test("Test isPalindrome") {
+    val array = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1, null))))
+    val array2 = new ListNode(1, new ListNode(2, null))
+    val array3 = new ListNode(1, new ListNode(2, new ListNode(1, null)))
+    assert(LeetCode.isPalindrome(array))
+    assert(!LeetCode.isPalindrome(array2))
+    assert(LeetCode.isPalindrome(array3))
+  }
+
+  test("Test isPalindromeWithoutCreating") {
+    val array = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1, null))))
+    val array2 = new ListNode(1, new ListNode(2, null))
+    val array3 = new ListNode(1, new ListNode(2, new ListNode(1, null)))
+    assert(LeetCode.isPalindromeWithoutCreating(array))
+    assert(!LeetCode.isPalindromeWithoutCreating(array2))
+    assert(LeetCode.isPalindromeWithoutCreating(array3))
+  }
+
+  test("Test removeElements") {
+    val list = new ListNode(1, new ListNode(6, new ListNode(2, new ListNode(6, null))))
+
+    assert(LeetCode.removeElements(list, 6) == new ListNode(1, ListNode(2, null)))
   }
 }
