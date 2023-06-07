@@ -2040,4 +2040,17 @@ object LeetCode extends App {
 
     loop(0, letters.length - 1, None)
   }
+
+  def peakIndexInMountainArray(arr: Array[Int]): Int = {
+    @tailrec
+    def loop(from: Int, to: Int): Int = {
+      val mid = from + (to - from) / 2
+
+      if (arr(mid) > arr(mid + 1) && arr(mid) > arr(mid - 1)) mid
+      else if (arr(mid) > arr(mid + 1)) loop(from, mid - 1)
+      else loop(mid + 1, to)
+    }
+
+    loop(0, arr.length - 1)
+  }
 }
