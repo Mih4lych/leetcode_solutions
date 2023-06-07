@@ -1812,4 +1812,47 @@ object LeetCode extends App {
 
     (length * (length - 1)) / 2 - nums.sum
   }
+
+  def maxProfit(prices: Array[Int]): Int = {
+    prices.foldLeft(Int.MaxValue, 0) { case ((minPrice, maxProfit), nextPrice) =>
+      val newMin = minPrice.min(nextPrice)
+
+      (newMin, maxProfit.max(nextPrice - newMin))
+    }._2
+  }
+
+  def maxSubArray(nums: Array[Int]): Int = {
+    nums.foldLeft((Int.MinValue, 0)) { case ((curMax, curSum), nextInt) =>
+      val newSum = nextInt.max(curSum + nextInt)
+
+      (curMax.max(newSum), newSum)
+    }._1
+  }
+
+  def countBits(n: Int): Array[Int] = {
+    (0 to n).foldLeft(new Array[Int](n + 1)) { (array, num) =>
+      array(num) = num.toBinaryString.count(_ == '1')
+
+      array
+    }
+  }
+
+  def countBitsDP(n: Int): Array[Int] = {
+    (0 to n).foldLeft(new Array[Int](n + 1)) { (array, num) =>
+      array(num) = array(num >> 1) + num % 2
+
+      array
+    }
+  }
+
+  def hasCycle(head: ListNode): Boolean = {
+    @tailrec
+    def loop(slow: ListNode, fast: ListNode): Boolean = {
+      if (slow.next == null || fast.next == null || fast.next.next == null) false
+      else if (slow == fast.next.next) true
+      else loop(slow.next, fast.next.next)
+    }
+
+    loop(head, head)
+  }
 }
