@@ -2001,4 +2001,43 @@ object LeetCode extends App {
 
     result.next
   }
+
+  class Interval(_start: Int = 0, _end: Int = 0) {
+    var start: Int = _start
+    var end: Int = _end
+  }
+
+  def canAttendMeetings(intervals: Array[Interval]): Boolean = {
+    @tailrec
+    def loop(index: Int, sortedIntervals: Array[Interval]): Boolean = {
+      if (index == sortedIntervals.length - 1) true
+      else if (sortedIntervals(index).end > sortedIntervals(index + 1).start) false
+      else loop(index + 1, sortedIntervals)
+    }
+
+    loop(0, intervals.sortBy(_.start))
+  }
+
+  def nextGreatestLetter(letters: Array[Char], target: Char): Char = {
+    @tailrec
+    def loop(from: Int, to: Int, lastTargetChar: Option[Char]): Char = {
+      if (from > to) lastTargetChar match {
+        case Some(value) => value
+        case None => letters(0)
+      }
+      else {
+        val middle = from + (to - from) / 2
+
+        if (letters(middle) <= target) loop(middle + 1, to, lastTargetChar)
+        else {
+          lastTargetChar match {
+            case Some(value) => loop(from, middle - 1, Some(if (value < letters(middle)) value else letters(middle)))
+            case None => loop(from, middle - 1, Some(letters(middle)))
+          }
+        }
+      }
+    }
+
+    loop(0, letters.length - 1, None)
+  }
 }
