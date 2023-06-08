@@ -2108,4 +2108,58 @@ object LeetCode extends App {
     if (root == null) 0
     else loop(Queue(root), 1)
   }
+
+  def isSameTreeAnother(p: TreeNode, q: TreeNode): Boolean = {
+    @tailrec
+    def loop(pStack: List[TreeNode], qStack: List[TreeNode]): Boolean = {
+      (pStack, qStack) match {
+        case (Nil, Nil) => true
+        case (Nil, _) | (_, Nil) => false
+        case (pNext :: pRem, qNext :: qRem) =>
+          if (isEqual(pNext, qNext)) loop(dfs(pNext, pRem), dfs(qNext, qRem))
+          else false
+      }
+    }
+
+    def isEqual(pNode: TreeNode, qNode: TreeNode): Boolean = {
+      (Option(pNode), Option(qNode)) match {
+        case (None, None) => true
+        case (Some(pVal), Some(qVal)) => pVal.value == qVal.value
+        case _ => false
+      }
+    }
+
+    def dfs(node: TreeNode, stack: List[TreeNode]): List[TreeNode] =
+      if (node != null) node.left :: node.right :: stack else stack
+
+    loop(List(p), List(q))
+  }
+
+  def hasPathSum(root: TreeNode, targetSum: Int): Boolean = {
+    @tailrec
+    def loop(nodeStack: List[TreeNode], visited: Set[TreeNode], curTarget: Int): Boolean = {
+      nodeStack match {
+        case curNode :: tail =>
+          if (visited.contains(curNode)) loop(tail, visited, curTarget + curNode.value)
+          else if (curNode.left == null && curNode.right == null) {
+            if (curTarget - curNode.value == 0) true
+            else loop(tail, visited, curTarget)
+          }
+          else {
+            val newTarget = curTarget - curNode.value
+            val newVisited = visited + curNode
+
+            loop(addNodeToStack(addNodeToStack(nodeStack, curNode.left), curNode.right), newVisited, newTarget)
+          }
+        case Nil => false
+      }
+    }
+
+    def addNodeToStack(stack: List[TreeNode], node: TreeNode): List[TreeNode] = {
+      if (node != null) node :: stack else stack
+    }
+
+    if (root == null) false
+    else loop(List(root), Set.empty[TreeNode], targetSum)
+  }
 }
