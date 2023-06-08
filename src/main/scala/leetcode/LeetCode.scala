@@ -2190,4 +2190,18 @@ object LeetCode extends App {
     if (root == null) 0
     else loop(Queue(root), 1)
   }
+
+  def diameterOfBinaryTree(root: TreeNode): Int = {
+    def loop(node: TreeNode): (Int, Int) = {
+      if (node == null) (0, 0)
+      else {
+        val (heightLeft, maxLeft) = loop(node.left)
+        val (heightRight, maxRight) = loop(node.right)
+
+        (1 + heightLeft.max(heightRight), maxLeft.max(maxRight).max(heightLeft + heightRight))
+      }
+    }
+
+    loop(root)._2
+  }
 }
