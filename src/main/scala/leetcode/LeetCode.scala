@@ -2162,4 +2162,32 @@ object LeetCode extends App {
     if (root == null) false
     else loop(List(root), Set.empty[TreeNode], targetSum)
   }
+
+  def maxDepth(root: TreeNode): Int = {
+    @tailrec
+    def loop(queue: Queue[TreeNode], maxDepth: Int): Int = {
+      if (queue.isEmpty) maxDepth
+      else {
+        val steps = queue.length
+        loop(bfs(queue, steps), maxDepth + 1)
+      }
+    }
+
+    @tailrec
+    def bfs(queue: Queue[TreeNode], steps: Int): Queue[TreeNode] = {
+      if (steps == 0) queue
+      else {
+        val (node, newQueue) = queue.dequeue
+
+        bfs(addNodeToQueue(addNodeToQueue(newQueue, node.left), node.right), steps - 1)
+      }
+    }
+
+    def addNodeToQueue(queue: Queue[TreeNode], node: TreeNode): Queue[TreeNode] = {
+      if (node != null) queue.enqueue(node) else queue
+    }
+
+    if (root == null) 0
+    else loop(Queue(root), 1)
+  }
 }
