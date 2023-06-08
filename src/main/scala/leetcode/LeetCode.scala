@@ -2053,4 +2053,59 @@ object LeetCode extends App {
 
     loop(0, arr.length - 1)
   }
+
+  def averageOfLevels(root: TreeNode): Array[Double] = {
+    @tailrec
+    def loop(queue: Queue[List[TreeNode]], acc: Vector[Double]): Vector[Double] = {
+      if (queue.isEmpty) acc
+      else {
+        val (listNodeLevel, remQueue) = queue.dequeue
+        val newListLevel = listNodeLevel.foldLeft(List.empty[TreeNode]) { (list, node) =>
+          if (node != null) addNodeToList(addNodeToList(list, node.left), node.right)
+          else list
+        }
+        val newQueue = if (newListLevel.nonEmpty) remQueue.enqueue[List[TreeNode]](newListLevel) else remQueue
+        val (levelSum, levelCount) = listNodeLevel.foldLeft((0L, 0)) { case ((sum, cont), curNode) =>
+          (sum + curNode.value, cont + 1)
+        }
+
+        loop(newQueue, acc :+ (levelSum / levelCount.toDouble))
+      }
+    }
+
+    def addNodeToList(list: List[TreeNode], node: TreeNode): List[TreeNode] = {
+      if (node != null) node :: list else list
+    }
+
+    loop(Queue(List(root)), Vector.empty[Double]).toArray
+  }
+
+  def minDepth(root: TreeNode): Int = {
+    @tailrec
+    def loop(queue: Queue[TreeNode], minLevel: Int): Int = {
+      val steps = queue.length
+      val (newQueue, hasEnd) = bfs(queue, steps)
+
+      if (!hasEnd) loop(newQueue, minLevel + 1)
+      else minLevel
+    }
+
+    @tailrec
+    def bfs(queue: Queue[TreeNode], steps: Int): (Queue[TreeNode], Boolean) = {
+      if (steps == 0) (queue, false)
+      else {
+        val (node, newQueue) = queue.dequeue
+
+        if (node.left != null || node.right != null) bfs(addNodeToQueue(addNodeToQueue(newQueue, node.left), node.right), steps - 1)
+        else (newQueue, true)
+      }
+    }
+
+    def addNodeToQueue(queue: Queue[TreeNode], node: TreeNode): Queue[TreeNode] = {
+      if (node != null) queue.enqueue(node) else queue
+    }
+
+    if (root == null) 0
+    else loop(Queue(root), 1)
+  }
 }
