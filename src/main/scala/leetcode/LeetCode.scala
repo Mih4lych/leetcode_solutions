@@ -2284,4 +2284,16 @@ object LeetCode extends App {
       case None => null
     }
   }
+
+  def twoSumDif(nums: Array[Int], target: Int): Array[Int] = {
+    @tailrec
+    def loop(curIndex: Int, map: Map[Int, Int]): Array[Int] = {
+      val rem = target - nums(curIndex)
+
+      if (map.contains(rem)) Array(map(rem), curIndex)
+      else loop(curIndex + 1, map.updated(nums(curIndex), curIndex))
+    }
+
+    loop(0, Map.empty[Int, Int])
+  }
 }
