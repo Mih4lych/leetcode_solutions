@@ -2296,4 +2296,27 @@ object LeetCode extends App {
 
     loop(0, Map.empty[Int, Int])
   }
+
+  def sortedSquaresNew(nums: Array[Int]): Array[Int] = {
+    @tailrec
+    def loop(leftIndex: Int, rightIndex: Int, curFillIndex: Int, result: Array[Int]): Array[Int] = {
+      if (curFillIndex < 0) result
+      else {
+        val left = nums(leftIndex).abs
+        val right = nums(rightIndex).abs
+
+        if (left > right) {
+          result(curFillIndex) = Math.pow(left, 2).toInt
+          loop(leftIndex + 1, rightIndex, curFillIndex - 1, result)
+        } else {
+          result(curFillIndex) = Math.pow(right, 2).toInt
+          loop(leftIndex, rightIndex - 1, curFillIndex - 1, result)
+        }
+      }
+    }
+
+    val res = new Array[Int](nums.length)
+
+    loop(0, nums.length - 1, nums.length - 1, res)
+  }
 }
