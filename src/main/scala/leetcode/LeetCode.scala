@@ -2218,4 +2218,70 @@ object LeetCode extends App {
         root1
     }
   }
+
+  def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode): TreeNode = {
+    @tailrec
+    def loop(curNode: TreeNode): TreeNode = {
+      if (p.value < curNode.value && q.value < curNode.value) loop(curNode.left)
+      else if (p.value > curNode.value && q.value > curNode.value) loop(curNode.right)
+      else curNode
+    }
+
+    loop(root)
+  }
+
+  def isSubtree(root: TreeNode, subRoot: TreeNode): Boolean = {
+    @tailrec
+    def loop(rootQueue: Queue[TreeNode]): Boolean = {
+      if (rootQueue.isEmpty) false
+      else {
+        val (curNode, remQueue) = rootQueue.dequeue
+
+        if (checkTrees(List(curNode), List(subRoot))) true
+        else loop(bfs(curNode.left, bfs(curNode.right, remQueue)))
+      }
+    }
+
+    @tailrec
+    def checkTrees(pStack: List[TreeNode], qStack: List[TreeNode]): Boolean = {
+      (pStack, qStack) match {
+        case (Nil, Nil) => true
+        case (Nil, _) | (_, Nil) => false
+        case (pNext :: pRem, qNext :: qRem) =>
+          if (isEqual(pNext, qNext)) checkTrees(dfs(pNext, pRem), dfs(qNext, qRem))
+          else false
+      }
+    }
+
+    def isEqual(pNode: TreeNode, qNode: TreeNode): Boolean = {
+      (Option(pNode), Option(qNode)) match {
+        case (None, None) => true
+        case (Some(pVal), Some(qVal)) => pVal.value == qVal.value
+        case _ => false
+      }
+    }
+
+    def dfs(node: TreeNode, stack: List[TreeNode]): List[TreeNode] =
+      if (node != null) node.left :: node.right :: stack else stack
+
+    def bfs(node: TreeNode, queue: Queue[TreeNode]): Queue[TreeNode] =
+      if (node != null) queue.enqueue(node) else queue
+
+    loop(Queue(root))
+  }
+
+  def invertTree(root: TreeNode): TreeNode = {
+    Option(root) match {
+      case Some(node) =>
+        val nodeRight = node.right
+        node.right = node.left
+        node.left = nodeRight
+
+        invertTree(node.left)
+        invertTree(node.right)
+
+        root
+      case None => null
+    }
+  }
 }
