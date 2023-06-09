@@ -2204,4 +2204,18 @@ object LeetCode extends App {
 
     loop(root)._2
   }
+
+  def mergeTreesRec(root1: TreeNode, root2: TreeNode): TreeNode = {
+    (Option(root1), Option(root2)) match {
+      case (None, None) => null
+      case (Some(r1), None) => r1
+      case (None, Some(r2)) => r2
+      case (Some(r1), Some(r2)) =>
+        root1.value = r1.value + r2.value
+        root1.left = mergeTrees(r1.left, r2.left)
+        root1.right = mergeTrees(r1.right, r2.right)
+
+        root1
+    }
+  }
 }
