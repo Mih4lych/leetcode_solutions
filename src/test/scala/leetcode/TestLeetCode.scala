@@ -252,4 +252,11 @@ class TestLeetCode extends AnyFunSuite {
 
     assert(LeetCode.removeElements(list, 6) == new ListNode(1, ListNode(2, null)))
   }
+
+  test("Test productExceptSelf") {
+    val array = Array(1,2,3,4)
+    val result = Array(24,12,8,6)
+
+    assert(LeetCode.productExceptSelf(array).sameElements(result))
+  }
 }

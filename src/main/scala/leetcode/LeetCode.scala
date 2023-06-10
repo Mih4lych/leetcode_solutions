@@ -2319,4 +2319,100 @@ object LeetCode extends App {
 
     loop(0, nums.length - 1, nums.length - 1, res)
   }
+
+  def backspaceCompare(s: String, t: String): Boolean = {
+    @tailrec
+    def loop(sIndex: Int, tIndex: Int): Boolean = {
+      if (sIndex < 0 && tIndex < 0) true
+      else if (sIndex < 0) {
+        val (_, optTChar) = skip(t, tIndex, 0)
+
+        optTChar match {
+          case Some(_) => false
+          case None => true
+        }
+      }
+      else if (tIndex < 0) {
+        val (_, optSChar) = skip(s, sIndex, 0)
+
+        optSChar match {
+          case Some(_) => false
+          case None => true
+        }
+      }
+      else {
+        val (curSIndex, optSChar) = skip(s, sIndex, 0)
+        val (curTIndex, optTChar) = skip(t, tIndex, 0)
+
+        (optSChar, optTChar) match {
+          case (None, None) => true
+          case (None, _) | (_, None) => false
+          case (Some(sChar), Some(tChar)) =>
+            if (sChar == tChar) loop(curSIndex - 1, curTIndex - 1)
+            else false
+        }
+      }
+    }
+
+    def skip(str: String, index: Int, curBackspaces: Int): (Int, Option[Char]) = {
+      if (index < 0) (index, None)
+      else {
+        val curChar = str(index)
+
+        if (curChar == '#') skip(str, index - 1, curBackspaces + 1)
+        else if (curBackspaces > 0) skip(str, index - 1, curBackspaces - 1)
+        else (index, Some(curChar))
+      }
+    }
+
+    loop(s.length - 1, t.length - 1)
+  }
+
+  def majorityElement(nums: Array[Int]): Int = {
+    @tailrec
+    def loop(curIndex: Int, curPopulation: Int, result: Int): Int = {
+      if (curIndex == nums.length) result
+      else if (curPopulation == 0) loop(curIndex + 1, curPopulation + 1, nums(curIndex))
+      else if (result == nums(curIndex)) loop(curIndex + 1, curPopulation + 1, result)
+      else loop(curIndex + 1, curPopulation - 1, result)
+    }
+
+    loop(0, 0, -1)
+  }
+
+  def productExceptSelf(nums: Array[Int]): Array[Int] = {
+    val result = Array.fill(nums.length)(1)
+
+    (1 until nums.length).foldLeft(1) { (multiplier, nextIndex) =>
+      result(nextIndex) = nums(nextIndex - 1) * multiplier
+
+      result(nextIndex)
+    }
+
+    ((nums.length - 2) to 0 by -1).foldLeft(nums(nums.length - 1)) { (multiplier, nextIndex) =>
+      result(nextIndex) = result(nextIndex) * multiplier
+
+      nums(nextIndex) * multiplier
+    }
+
+    result
+  }
+
+  def findDuplicate(nums: Array[Int]): Int = {
+    @tailrec
+    def loop(slow: Int, fast: Int): Int = {
+      if (slow == fast) getCycleStart(nums(0), fast)
+      else {
+        loop(nums(slow), nums(nums(fast)))
+      }
+    }
+
+    @tailrec
+    def getCycleStart(slow: Int, fast: Int): Int = {
+      if (slow == fast) slow
+      else getCycleStart(nums(slow), nums(fast))
+    }
+
+    loop(nums(nums(0)), nums(nums(nums(0))))
+  }
 }
