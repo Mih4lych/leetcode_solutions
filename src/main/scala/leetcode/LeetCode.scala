@@ -2415,4 +2415,250 @@ object LeetCode extends App {
 
     loop(nums(nums(0)), nums(nums(nums(0))))
   }
+
+  def construct2DArray(original: Array[Int], m: Int, n: Int): Array[Array[Int]] = {
+    @tailrec
+    def loop(row: Int, column: Int, res: Array[Array[Int]]): Array[Array[Int]] = {
+      if (row == m) res
+      else if (column == n) loop(row + 1, 0, res)
+      else {
+        res(row)(column) = original(original.length / m * row + column)
+
+        loop(row, column + 1, res)
+      }
+    }
+
+    if (m * n == original.length) {
+      loop(0, 0, Array.fill(m)(new Array[Int](n)))
+    }
+    else Array.empty[Array[Int]]
+  }
+
+  def findDuplicates(nums: Array[Int]): List[Int] = {
+    @tailrec
+    def loop(curIndex: Int): List[Int] = {
+      if (curIndex == nums.length) getDuplicates(0, List.empty[Int])
+      else {
+        val curNum = nums(curIndex)
+
+        if (nums(curNum - 1) != curNum) {
+          nums(curIndex) = nums(curNum - 1)
+          nums(curNum - 1) = curNum
+
+          loop(curIndex)
+        }
+        else loop(curIndex + 1)
+      }
+    }
+
+    @tailrec
+    def getDuplicates(curIndex: Int, acc: List[Int]): List[Int] = {
+      if (curIndex == nums.length) acc.reverse
+      else if (nums(curIndex) != curIndex + 1) getDuplicates(curIndex + 1, (curIndex + 1) :: acc)
+      else getDuplicates(curIndex + 1, acc)
+    }
+
+    loop(0)
+  }
+
+  def setZeroes(matrix: Array[Array[Int]]): Unit = {
+    @tailrec
+    def loop(row: Int, column: Int, needClearFirstRow: Boolean, needClearFirstColumn: Boolean): Unit = {
+      if (row == matrix.length) fillZeroes(needClearFirstRow, needClearFirstColumn)
+      else if (column == matrix(0).length) loop(row + 1, 0, needClearFirstRow, needClearFirstColumn)
+      else if (matrix(row)(column) == 0) {
+        if (row == 0 && column == 0) loop(row, column + 1, true, true)
+        else if (row == 0) loop(row, column + 1, true, needClearFirstColumn)
+        else if (column == 0) loop(row, column + 1, needClearFirstRow, true)
+        else {
+          if (matrix(row)(0) != 0) matrix(row)(0) = 0
+          if (matrix(0)(column) != 0) matrix(0)(column) = 0
+
+          loop(row, column + 1, needClearFirstRow, needClearFirstColumn)
+        }
+      }
+      else loop(row, column + 1, needClearFirstRow, needClearFirstColumn)
+    }
+
+    def fillZeroes(needClearFirstRow: Boolean, needClearFirstColumn: Boolean): Unit = {
+      (1 until matrix.length).foreach(row => if (matrix(row)(0) == 0) setZeroForRow(row, 0))
+      (1 until matrix(0).length).foreach(column => if (matrix(0)(column) == 0) setZeroForColumn(0, column))
+
+      if (needClearFirstRow) setZeroForRow(0, 0)
+      if (needClearFirstColumn) setZeroForColumn(0, 0)
+    }
+
+    @tailrec
+    def setZeroForColumn(row: Int, column: Int): Unit = {
+      if (row == matrix.length) ()
+      else {
+        matrix(row)(column) = 0
+
+        setZeroForColumn(row + 1, column)
+      }
+    }
+
+    @tailrec
+    def setZeroForRow(row: Int, column: Int): Unit = {
+      if (column == matrix(0).length) ()
+      else {
+        matrix(row)(column) = 0
+
+        setZeroForRow(row, column + 1)
+      }
+    }
+
+    loop(0, 0, false, false)
+  }
+
+  def spiralOrder(matrix: Array[Array[Int]]): List[Int] = {
+    @tailrec
+    def loop(rowFrom: Int, rowTo: Int, columnFrom: Int, columnTo: Int, list: List[Int]): List[Int] = {
+      if (rowFrom > rowTo || columnFrom > columnTo) list.reverse
+      else if (rowFrom == rowTo) {
+        (columnFrom to columnTo).foldLeft(list)((acc, columnIndex) => matrix(rowFrom)(columnIndex) :: acc).reverse
+      }
+      else if (columnFrom == columnTo) {
+        (rowFrom to rowTo).foldLeft(list)((acc, rowIndex) => matrix(rowIndex)(columnFrom) :: acc).reverse
+      }
+      else {
+        val firstStepList = (columnFrom to columnTo).foldLeft(list)((acc, columnIndex) => matrix(rowFrom)(columnIndex) :: acc)
+        val secondStepList = (rowFrom + 1 to rowTo).foldLeft(firstStepList)((acc, rowIndex) => matrix(rowIndex)(columnTo) :: acc)
+        val thirdStepList = (columnTo - 1 to columnFrom by -1).foldLeft(secondStepList)((acc, columnIndex) => matrix(rowTo)(columnIndex) :: acc)
+        val fourthStepList = (rowTo - 1 until rowFrom by -1).foldLeft(thirdStepList)((acc, rowIndex) => matrix(rowIndex)(columnFrom) :: acc)
+
+        loop(rowFrom + 1, rowTo - 1, columnFrom + 1, columnTo - 1, fourthStepList)
+      }
+    }
+
+    loop(0, matrix.length - 1, 0, matrix(0).length - 1, List.empty[Int])
+  }
+
+  /*def generateParenthesis(n: Int): List[String] = {
+    def loop(queue: Queue[String], left: Int, right: Int, acc: ListBuffer[String]): Unit = {
+      if (left + right == 0) acc += queue.mkString
+
+      if (left > 0) {
+        val newQueue
+      }
+    }
+  }*/
+
+  def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = {
+    @tailrec
+    def loop(l1Node: Option[ListNode], l2Node: Option[ListNode], rem: Int, res: ListNode): Unit = {
+      if (l1Node.isDefined || l2Node.isDefined || rem > 0) {
+        val l1Num = l1Node.map(_.x).getOrElse(0)
+        val l2Num = l2Node.map(_.x).getOrElse(0)
+        val sum = l1Num + l2Num + rem
+        val newRem = sum % 10
+
+        res.next = new ListNode(sum / 10, null)
+
+        loop(l1Node.flatMap(node => Option(node.next)), l2Node.flatMap(node => Option(node.next)), newRem, res.next)
+      }
+    }
+
+    val res = new ListNode(0, null)
+
+    loop(Option(l1), Option(l2), 0, res)
+
+    res.next
+  }
+
+  /*
+      def genNumber(node: ListNode, counter: Int, acc: Long): Long = {
+        Option(node) match {
+          case Some(value) =>
+            genNumber(value.next, counter + 1, value.x * Math.pow(10, counter).toLong + acc)
+          case None => acc
+        }
+      }
+
+      def genResNode(curNum: Long, res: ListNode): Unit = {
+        if (curNum < 10) res.next = new ListNode(curNum.toInt, null)
+        else {
+          res.next = new ListNode((curNum % 10).toInt, null)
+          genResNode(curNum / 10, res.next)
+        }
+      }
+
+      val l1Num = genNumber(l1, 0, 0)
+      val l2Num = genNumber(l2, 0, 0)
+      val res = new ListNode(0, null)
+
+      genResNode(l1Num + l2Num, res)
+
+      res.next
+    }
+   */
+
+  def numIslands(grid: Array[Array[Char]]): Int = {
+    def dfs(n: Int, m: Int): Unit = {
+      if (n >= 0 && m >= 0 && n < grid.length && m < grid(0).length) {
+        if (grid(n)(m) == '1') {
+          grid(n)(m) = '0'
+
+          dfs(n - 1, m)
+          dfs(n + 1, m)
+          dfs(n, m - 1)
+          dfs(n, m + 1)
+        }
+      }
+    }
+
+    grid.indices.foldLeft(0) { (acc, n) => grid(0).indices.foldLeft(acc) {(res, m) =>
+      if (grid(n)(m) == '1') {
+        dfs(n, m)
+
+        res + 1
+      } else res
+    }}
+  }
+
+  def merge(intervals: Array[Array[Int]]): Array[Array[Int]] = {
+    @tailrec
+    def loop(currIndex: Int, accArray: Array[Int], result: ArrayBuffer[Array[Int]]): Array[Array[Int]] = {
+      if (currIndex == intervals.length) result.append(accArray).toArray
+      else {
+        val curArray = intervals(currIndex)
+
+        if (accArray(1) >= curArray(0)) {
+          accArray(1) = accArray(1).max(curArray(1))
+          loop(currIndex + 1, accArray, result)
+        }
+        else loop(currIndex + 1, curArray, result += accArray)
+      }
+    }
+
+    intervals.sortInPlaceBy(_(0))
+    loop(1, intervals(0), ArrayBuffer.empty[Array[Int]])
+  }
+
+
+  /*
+  firstList =
+  [[0,2],[5,10],[13,23],[24,25]]
+  secondList =
+  [[1,5],[8,12],[15,24],[25,26]]
+   */
+  def intervalIntersection(firstList: Array[Array[Int]], secondList: Array[Array[Int]]): Array[Array[Int]] = {
+    @tailrec
+    def loop(firstIndex: Int, secondIndex: Int, buf: ArrayBuffer[Array[Int]]): Array[Array[Int]] = {
+      if (firstIndex == firstList.length || secondIndex == secondList.length) buf.toArray
+      else {
+        val left = firstList(firstIndex)(0).max(secondList(secondIndex)(0))
+        val right = firstList(firstIndex)(1).min(secondList(secondIndex)(1))
+
+        if (left <= right)
+          buf += Array(left, right)
+
+        if (firstList(firstIndex)(1) > secondList(secondIndex)(1)) loop(firstIndex + 1, secondIndex, buf)
+        else loop(firstIndex, secondIndex + 1, buf)
+      }
+
+    }
+
+    loop(0, 0, ArrayBuffer.empty[Array[Int]])
+  }
 }

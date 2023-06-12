@@ -259,4 +259,13 @@ class TestLeetCode extends AnyFunSuite {
 
     assert(LeetCode.productExceptSelf(array).sameElements(result))
   }
+
+  test("Test setZeroes") {
+    val array = Array(Array(1,1,1),Array(1,0,1),Array(1,1,1))
+    val result = Array(Array(1,0,1),Array(0,0,0),Array(1,0,1))
+
+    LeetCode.setZeroes(array)
+
+    assert(array == result)
+  }
 }
