@@ -268,4 +268,8 @@ class TestLeetCode extends AnyFunSuite {
 
     assert(array == result)
   }
+
+  test("Test longestPalindromeStr") {
+    assert(longestPalindromeStr("ac") == "c")
+  }
 }

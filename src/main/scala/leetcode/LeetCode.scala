@@ -2534,16 +2534,6 @@ object LeetCode extends App {
     loop(0, matrix.length - 1, 0, matrix(0).length - 1, List.empty[Int])
   }
 
-  /*def generateParenthesis(n: Int): List[String] = {
-    def loop(queue: Queue[String], left: Int, right: Int, acc: ListBuffer[String]): Unit = {
-      if (left + right == 0) acc += queue.mkString
-
-      if (left > 0) {
-        val newQueue
-      }
-    }
-  }*/
-
   def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = {
     @tailrec
     def loop(l1Node: Option[ListNode], l2Node: Option[ListNode], rem: Int, res: ListNode): Unit = {
@@ -2713,5 +2703,49 @@ object LeetCode extends App {
 
     if (root == null) List.empty[List[Int]]
     else loop(Queue(root), ListBuffer.empty[List[Int]], true)
+  }
+
+  def generateParenthesis(n: Int): List[String] = {
+    def loop(left: Int, right: Int, acc: ListBuffer[String], curString: String): Unit = {
+      if (curString.length == n * 2) acc += curString
+
+      if (left < n) {
+        loop(left + 1, right, acc, curString + "(")
+      }
+      if (right < left) {
+        loop(left, right + 1, acc, curString + ")")
+      }
+    }
+
+    val res = ListBuffer.empty[String]
+    loop(0, 0, res, "")
+
+    res.toList
+  }
+
+  def longestPalindromeStr(s: String): String = {
+    @tailrec
+    def loop(left: Int, right: Int): (Int, Int) = {
+      if (left < 0 || right == s.length || s(left) != s(right)) (left + 1, right - 1)
+      else loop(left - 1, right + 1)
+    }
+
+    def getMax(odd: (Int, Int), even: (Int, Int), max: String): String = {
+      val oddLength = odd._2 - odd._1 + 1
+      val evenLength = even._2 - even._1 + 1
+      val (curMax, curMaxLength) = if (oddLength > evenLength) (odd, oddLength) else (even, evenLength)
+
+      if (curMaxLength > max.length) s.substring(curMax._1, curMax._2 + 1) else max
+    }
+
+    if (s.length <= 1) s
+    else {
+      s.indices.foldLeft("") { (res, index) =>
+        val curMaxOdd = loop(index, index)
+        val curMaxEven = if (index == s.length - 1) curMaxOdd else loop(index, index + 1)
+
+        getMax(curMaxOdd, curMaxEven, res)
+      }
+    }
   }
 }
