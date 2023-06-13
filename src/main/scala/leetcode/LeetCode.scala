@@ -2661,4 +2661,57 @@ object LeetCode extends App {
 
     loop(0, 0, ArrayBuffer.empty[Array[Int]])
   }
+
+  def isValidBST(root: TreeNode): Boolean = {
+    def loop(node: TreeNode, minOpt: Option[Int], maxOpt: Option[Int]): Boolean = {
+      if (node == null) true
+      else {
+        val isWrong =
+          (minOpt, maxOpt) match {
+            case (Some(min), Some(max)) =>
+              node.value <= min || node.value >= max
+            case (Some(min), None) =>
+              node.value <= min
+            case (None, Some(max)) =>
+              node.value >= max
+            case _ => false
+          }
+
+        if (isWrong) false
+        else loop(node.left, minOpt, Some(node.value)) && loop(node.right, Some(node.value), maxOpt)
+      }
+    }
+
+    loop(root, None, None)
+  }
+
+  def zigzagLevelOrder(root: TreeNode): List[List[Int]] = {
+    @tailrec
+    def loop(nodes: Queue[TreeNode], acc: ListBuffer[List[Int]], isReversed: Boolean): List[List[Int]] = {
+      if (nodes.isEmpty) acc.toList
+      else {
+        val levelSize = nodes.length
+        val (newQueue, list) = fillList(nodes, levelSize, ListBuffer.empty[Int])
+
+        loop(newQueue, acc += (if (isReversed) list.reverse else list), !isReversed)
+      }
+    }
+
+    @tailrec
+    def fillList(nodes: Queue[TreeNode], remLevelSize: Int, acc: ListBuffer[Int]): (Queue[TreeNode], List[Int]) = {
+      if (remLevelSize == 0) (nodes, acc.toList)
+      else {
+        val (curNode, remQueue) = nodes.dequeue
+        acc += curNode.value
+
+        fillList(bfs(curNode.left, bfs(curNode.right, remQueue)), remLevelSize - 1, acc)
+      }
+    }
+
+    def bfs(node: TreeNode, queue: Queue[TreeNode]): Queue[TreeNode] =
+      if (node != null) queue.enqueue(node) else queue
+
+    if (root == null) List.empty[List[Int]]
+    else loop(Queue(root), ListBuffer.empty[List[Int]], true)
+  }
 }
