@@ -2748,4 +2748,79 @@ object LeetCode extends App {
       }
     }
   }
+
+  def characterReplacement(s: String, k: Int): Int = {
+    @tailrec
+    def loop(start: Int, curIndex: Int, remReplacements: Int, curMax: Int, genMax: Int): Int = {
+      if (start == s.length) genMax
+      else if (curIndex == s.length) (curMax + remReplacements.min(start)).max(genMax)
+      else if (s(start) == s(curIndex)) loop(start, curIndex + 1, remReplacements, curMax + 1, genMax)
+      else {
+        if (remReplacements > 0) loop(start, curIndex + 1, remReplacements - 1, curMax + 1, genMax)
+        else loop(start + 1, start + 1, k, 0, curMax.max(genMax))
+      }
+    }
+
+    loop(0, 0, k, 0, 0)
+  }
+
+  def characterReplacementArray(s: String, k: Int): Int = {
+    @tailrec
+    def loop(left: Int, right: Int, counter: Array[Int], max: Int): Int = {
+      if (right == s.length) max
+      else {
+        counter(s(right) - 'A') += 1
+        if ((right - left + 1) - counter.max <= k) loop(left, right + 1, counter, max.max(right - left + 1))
+        else {
+          counter(s(left) - 'A') -= 1
+          loop(left + 1, right + 1, counter, max)
+        }
+      }
+    }
+
+    loop(0, 0, Array.fill(26)(0), 0)
+  }
+
+  def topKFrequent(nums: Array[Int], k: Int): Array[Int] = {
+    @tailrec
+    def loop(arrayListIndex: Int, resIndex: Int, array: Array[List[Int]], curList: List[Int], res: Array[Int]): Array[Int] = {
+      if (resIndex == res.length) res
+      else {
+        curList match {
+          case head :: tail =>
+            res(resIndex) = head
+            loop(arrayListIndex, resIndex + 1, array, tail, res)
+          case Nil =>
+            loop(arrayListIndex - 1, resIndex, array, array(arrayListIndex), res)
+        }
+      }
+    }
+
+    val counter = nums.foldLeft(Map.empty[Int, Int]) {(map, next) =>
+      map.updated(next, map.getOrElse(next, 0) + 1)
+    }.groupMap(_._2)(_._1).view.mapValues(_.toList).toMap
+    val arrayOfList = new Array[List[Int]](nums.length)
+    val arrayResult = new Array[Int](k)
+
+    arrayOfList.indices.foreach(index => arrayOfList(index) = counter.getOrElse(index + 1, List.empty))
+
+    loop(arrayOfList.length - 1, 0, arrayOfList, arrayOfList(arrayOfList.length - 1), arrayResult)
+  }
+
+  def findClosestElements(arr: Array[Int], k: Int, x: Int): List[Int] = {
+    @tailrec
+    def loop(left: Int, right: Int): List[Int] = {
+      if (left >= right) arr.slice(left, left + k).toList
+      else {
+        val mid = left + (right - left) / 2
+
+        if (x - arr(mid) > arr(mid + k) - x)
+          loop(mid + 1, right)
+        else
+          loop(left, mid - 1)
+      }
+    }
+
+    loop(0, arr.length - k)
+  }
 }

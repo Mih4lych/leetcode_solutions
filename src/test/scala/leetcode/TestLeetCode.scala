@@ -272,4 +272,11 @@ class TestLeetCode extends AnyFunSuite {
   test("Test longestPalindromeStr") {
     assert(longestPalindromeStr("ac") == "c")
   }
+
+  test("Test topKFrequent") {
+    val array = Array(1,1,1,2,2,3)
+    val array2 = Array(1)
+    assert(topKFrequent(array, 2).sameElements(Array(1, 2)))
+    assert(topKFrequent(array2, 1).sameElements(Array(1)))
+  }
 }
