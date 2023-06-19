@@ -279,4 +279,10 @@ class TestLeetCode extends AnyFunSuite {
     assert(topKFrequent(array, 2).sameElements(Array(1, 2)))
     assert(topKFrequent(array2, 1).sameElements(Array(1)))
   }
+
+  test("Test findMin") {
+    val array = Array(2, 1)
+
+    assert(findMin(array) == 1)
+  }
 }

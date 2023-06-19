@@ -2823,4 +2823,42 @@ object LeetCode extends App {
 
     loop(0, arr.length - k)
   }
+
+  def findMin(nums: Array[Int]): Int = {
+    @tailrec
+    def loop(left: Int, right: Int, res: Int): Int = {
+      if (left > right) res
+      else if (nums(left) < nums(right)) res.min(nums(left))
+      else{
+        val mid = left + (right - left) / 2
+
+        if (nums(mid) >= nums(left)) loop(mid + 1, right, res.min(nums(mid)))
+        else loop(left, mid - 1, res.min(nums(mid)))
+      }
+    }
+
+    loop(0, nums.length - 1, nums(0))
+  }
+
+  def searchBinSearch(nums: Array[Int], target: Int): Int = {
+    @tailrec
+    def loop(left: Int, right: Int): Int = {
+      if (left > right) -1
+      else {
+        val mid = left + (right - left) / 2
+
+        if (nums(mid) == target) mid
+        else if (nums(left) <= nums(mid)) {
+          if (nums(left) > target || nums(mid) < target) loop(mid + 1, right)
+          else loop(left, mid - 1)
+        }
+        else {
+          if (nums(right) < target || nums(mid) > target) loop(left, mid - 1)
+          else loop(mid + 1, right)
+        }
+      }
+    }
+
+    loop(0, nums.length - 1)
+  }
 }
