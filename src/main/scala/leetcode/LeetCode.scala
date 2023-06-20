@@ -2861,4 +2861,37 @@ object LeetCode extends App {
 
     loop(0, nums.length - 1)
   }
+
+  def maxProduct(nums: Array[Int]): Int = {
+    nums.foldLeft((Int.MinValue, 1, 1)) { case ((curProd, min, max), curNum) =>
+      val (newMin, newMax) = {
+        if (curNum == 0) (1, 1)
+        else if (curNum < 0) (max * curNum, min * curNum)
+        else (min * curNum, max * curNum)
+      }
+
+      (curProd.max(newMax), newMin, newMax)
+    }._1
+  }
+
+  def robV2(nums: Array[Int]): Int = {
+    if (nums.length <= 3) nums.max
+    else {
+      val firstMax = (2 to nums.length - 2).foldLeft((nums(0), nums(0).max(nums(1)))) { case ((firstPath, secondPath), nextInd) =>
+        (secondPath, secondPath.max(firstPath + nums(nextInd)))
+      }._2
+      val secondMax = (3 to nums.length - 1).foldLeft((nums(1), nums(1).max(nums(2)))) { case ((firstPath, secondPath), nextInd) =>
+        (secondPath, secondPath.max(firstPath + nums(nextInd)))
+      }._2
+
+      firstMax.max(secondMax)
+    }
+  }
+
+  def eraseOverlapIntervals(intervals: Array[Array[Int]]): Int = {
+    intervals.sortInPlaceBy(_(0)).foldLeft((Int.MinValue, 0)) { case ((newRight, res), nextInterval) =>
+      if (nextInterval(0) <= newRight) (newRight.min(nextInterval(1)), res + 1)
+      else (nextInterval(1), res)
+    }._2
+  }
 }
