@@ -2894,4 +2894,19 @@ object LeetCode extends App {
       else (nextInterval(1), res)
     }._2
   }
+
+  def lengthOfLongestSubstringNew(s: String): Int = {
+    @tailrec
+    def loop(start: Int, curRight: Int, set: Set[Char], curLength: Int, curMax: Int): Int = {
+      if (curRight == s.length) curMax.max(curLength)
+      else if (set(s(curRight))) {
+        loop(start + 1, curRight, set - s(start), curLength - 1, curMax.max(curLength))
+      }
+      else {
+        loop(start, curRight + 1, set + s(curRight), curLength + 1, curMax)
+      }
+    }
+
+    loop(0, 0, Set.empty[Char], 0, 0)
+  }
 }
