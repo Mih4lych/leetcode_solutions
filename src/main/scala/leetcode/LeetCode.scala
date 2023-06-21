@@ -2909,4 +2909,42 @@ object LeetCode extends App {
 
     loop(0, 0, Set.empty[Char], 0, 0)
   }
+
+  def checkInclusionNew(s1: String, s2: String): Boolean = {
+    @tailrec
+    def loop(curIndex: Int, arrS1: Array[Int], arrS2: Array[Int], com: Int): Boolean = {
+      if (com == 26) true
+      else if (curIndex == s2.length) false
+      else {
+        val rightIndex = s2(curIndex) - 'a'
+        val leftIndex = s2(curIndex - s1.length) - 'a'
+
+        arrS2(rightIndex) += 1
+        val rightChange = if (arrS1(rightIndex) == arrS2(rightIndex)) 1 else if (arrS1(rightIndex) + 1 == arrS2(rightIndex)) -1 else 0
+
+        arrS2(leftIndex) -= 1
+        val leftChange = if (arrS1(leftIndex) == arrS2(leftIndex)) 1 else if (arrS1(leftIndex) - 1 == arrS2(leftIndex)) -1 else 0
+
+        loop(curIndex + 1, arrS1, arrS2, com + rightChange + leftChange)
+      }
+    }
+
+    if (s1.length > s2.length) false
+    else {
+      val arrS1 = s1.foldLeft(new Array[Int](26)) { (array, curChar) =>
+        array(curChar - 'a') += 1
+
+        array
+      }
+      val arrS2 = (0 until s1.length).foldLeft(new Array[Int](26)) { (array, curIndex) =>
+        array(s2(curIndex) - 'a') += 1
+
+        array
+      }
+      val startCom = (0 until 26).foldLeft(0)((com, nextIndex) => com + (if (arrS1(nextIndex) == arrS2(nextIndex)) 1 else 0))
+
+      if (startCom == 26) true
+      else loop(s1.length, arrS1, arrS2, startCom)
+    }
+  }
 }

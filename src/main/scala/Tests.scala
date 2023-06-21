@@ -80,4 +80,6 @@ object Tests extends App {
   } finally {
     source.close()
   }
+
+  println((Map('a' -> 1, 'b' -> 2, 'c' -> 1).toSet diff Map('a' -> 2, 'b' -> 2, 'd' -> 1).toSet).size)
 }

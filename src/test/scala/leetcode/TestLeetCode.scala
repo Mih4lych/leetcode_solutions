@@ -285,4 +285,8 @@ class TestLeetCode extends AnyFunSuite {
 
     assert(findMin(array) == 1)
   }
+
+  test("Test checkInclusionNew") {
+    assert(checkInclusionNew("trinitrophenylmethylnitramine", "dinitrophenylhydrazinetrinitrophenylmethylnitramine"))
+  }
 }
