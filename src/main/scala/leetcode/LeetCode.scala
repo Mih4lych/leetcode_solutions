@@ -2947,4 +2947,40 @@ object LeetCode extends App {
       else loop(s1.length, arrS1, arrS2, startCom)
     }
   }
+
+  def binaryTreePaths(root: TreeNode): List[String] = {
+    @tailrec
+    def loop(stack: List[TreeNode], visited: Set[TreeNode], curPath: List[TreeNode], res: List[String]): List[String] = {
+      stack match {
+        case head :: rem =>
+          if (visited(head)) loop(rem, visited, curPath.tail, res)
+          else if (head.left == null && head.right == null) loop(rem, visited + head, curPath, (head :: curPath).map(_.value).reverse.mkString("->") :: res)
+          else loop(addToStack(head.left, addToStack(head.right, stack)), visited + head, head :: curPath, res)
+        case Nil => res
+      }
+    }
+
+    def addToStack(curNode: TreeNode, stack: List[TreeNode]): List[TreeNode] = {
+      if (curNode == null) stack else curNode :: stack
+    }
+
+    if (root == null) List.empty[String]
+    else loop(List(root), Set.empty[TreeNode], List.empty[TreeNode], List.empty[String])
+  }
+
+  def findDuplicatesNew(nums: Array[Int]): List[Int] = {
+    @tailrec
+    def loop(curIndex: Int, acc: List[Int]): List[Int] = {
+      if (curIndex == nums.length) acc
+      else {
+        if (nums(nums(curIndex).abs - 1) < 0)
+          loop(curIndex + 1, nums(curIndex).abs :: acc)
+        else {
+          nums(nums(curIndex).abs - 1) *= -1
+          loop(curIndex + 1, acc)
+        }
+      }
+    }
+    loop(0, List.empty[Int])
+  }
 }
