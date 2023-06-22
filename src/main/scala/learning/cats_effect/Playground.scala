@@ -3,7 +3,7 @@ package learning.cats_effect
 import cats.data.OptionT
 import cats.syntax.apply._
 import cats.syntax.option._
-import cats.effect.{IO, IOApp, Ref}
+import cats.effect._
 import cats.syntax.applicative._
 import cats.syntax.parallel._
 import learning.cats_effect.utils.general.DebugWrapper

@@ -2983,4 +2983,18 @@ object LeetCode extends App {
     }
     loop(0, List.empty[Int])
   }
+
+  def isSubsequence(s: String, t: String): Boolean = {
+    @tailrec
+    def loop(left: Int, right: Int): Boolean = {
+      if (left == s.length) true
+      else if (right == t.length) false
+      else {
+        if (s(left) == t(right)) loop(left + 1, right + 1)
+        else loop(left, right + 1)
+      }
+    }
+
+    loop(0, 0)
+  }
 }
