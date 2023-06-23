@@ -2999,6 +2999,7 @@ object LeetCode extends App {
   }
 
   def characterReplacementNew(s: String, k: Int): Int = {
+    @tailrec
     def loop(left: Int, right: Int, counter: Array[Int], max: Int, curMaxCount: Int): Int = {
       if (right == s.length) max
       else {
