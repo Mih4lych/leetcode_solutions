@@ -2997,4 +2997,28 @@ object LeetCode extends App {
 
     loop(0, 0)
   }
+
+  def characterReplacementNew(s: String, k: Int): Int = {
+    def loop(left: Int, right: Int, counter: Array[Int], max: Int, curMaxCount: Int): Int = {
+      if (right == s.length) max
+      else {
+        counter(s(right) - 'A') += 1
+        val newMaxCount = curMaxCount.max(counter(s(right) - 'A'))
+        if ((right - left + 1) - newMaxCount <= k) loop(left, right + 1, counter, max.max(right - left + 1), newMaxCount)
+        else {
+          counter(s(left) - 'A') -= 1
+          val newMaxCount = curMaxCount.max(counter(s(right) - 'A'))
+          loop(left + 1, right + 1, counter, max, newMaxCount)
+        }
+      }
+    }
+
+    loop(0, 0, Array.fill(26)(0), 0, Int.MinValue)
+  }
+
+  def topKFrequentNew(nums: Array[Int], k: Int): Array[Int] = {
+    nums.foldLeft(Map.empty[Int, Int]) { (map, next) =>
+      map.updated(next, map.getOrElse(next, 0) + 1)
+    }.groupMap(_._2)(_._1).toSeq.sortBy(-_._1).flatMap(_._2).take(k).toArray
+  }
 }
